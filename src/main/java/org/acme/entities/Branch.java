@@ -6,10 +6,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "branches")
@@ -24,13 +26,5 @@ public class Branch {
     private String address;
     @NotBlank(message = "La ciudad del centro medico no puede estar vacía")
     private String city;
-    
-    public Branch(@NotBlank(message = "El nombre del centro medico no puede estar vacío") String name,
-            @NotBlank(message = "la direccion del centro medico no puede estar vacío") String address,
-            @NotBlank(message = "La ciudad del centro medico no puede estar vacía") String city) {
-        this.name = name;
-        this.address = address;
-        this.city = city;
-    }
     
 }
