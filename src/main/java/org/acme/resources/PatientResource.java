@@ -1,4 +1,4 @@
-package org.acme.resources;
+/* package org.acme.resources;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -47,3 +47,4 @@ public class PatientResource {
         entity.delete();
     }
 }
+ */
