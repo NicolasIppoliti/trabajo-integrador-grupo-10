@@ -12,7 +12,7 @@ import org.acme.entities.Appointment;
 public class AppointmentResource {
 
     @GET
-    public List<Appointment> getTurnos() {
+    public List<Appointment> getAppointments() {
         return Appointment.listAll();
     }
 

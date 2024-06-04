@@ -24,6 +24,8 @@ public class Patient {
     private String lastName;
     @NotBlank(message = "Email no puede ser vacio.")
     private String email;
+    @NotBlank(message = "Contraseña no puede ser vacio.")
+    private String password;
     @NotBlank(message = "Telefono no puede ser vacio.")
     private String phone;
     @OneToMany(mappedBy = "patient")
@@ -61,6 +63,14 @@ public class Patient {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getPassword() {
+		return email;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getPhone() {
