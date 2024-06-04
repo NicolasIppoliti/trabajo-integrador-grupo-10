@@ -3,21 +3,29 @@ package org.acme.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
 @Entity
+@Table(name = "appointments")
 public class Appointment {
     @Id @GeneratedValue
     private Long id;
-
     @ManyToOne
+    @NotBlank(message = "Paciente no puede ser vacio.")
     private Patient patient;
-
+    @NotBlank(message = "Día y fecha no puede ser vacios.")
     private LocalDateTime dateHour;
-
     @ManyToOne
+    @NotBlank(message = "Especialista no puede ser vacio.")
     private Doctor doctor;
+    @NotBlank(message = "Razon del turno no puede ser vacio.")
     private String queryReason;
 
     // Getters y Setters
