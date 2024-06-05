@@ -24,10 +24,13 @@ public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @NotBlank(message = "El nombre del centro medico no puede estar vacío")
     private String name;
+    
     @NotBlank(message = "la direccion del centro medico no puede estar vacío")
     private String address;
+    
     @NotBlank(message = "La ciudad del centro medico no puede estar vacía")
     private String city;
 
