@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class Doctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @NotBlank(message = "El nombre no puede estar vacio")
     private String name;
@@ -48,6 +49,9 @@ public class Doctor {
         joinColumns = @JoinColumn(name = "doctor_id"),
         inverseJoinColumns = @JoinColumn(name = "schedule_id")
     )
-    private Set<Schedule> schedule = new HashSet<>();
+    private Set<Schedule> schedules = new HashSet<>();
+
+    @ManyToOne
+    private Branch branch;
     
 }
