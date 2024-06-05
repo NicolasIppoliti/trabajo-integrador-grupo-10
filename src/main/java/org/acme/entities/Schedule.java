@@ -12,15 +12,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(exclude = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "schedules")
+@Table(name = "schedules", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"})
+})
 public class Schedule {
 
     @Id
