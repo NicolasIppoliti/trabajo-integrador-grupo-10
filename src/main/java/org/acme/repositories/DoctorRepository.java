@@ -3,9 +3,9 @@ package org.acme.repositories;
 import java.util.List;
 import java.util.Set;
 
-import org.acme.entities.Branch;
-import org.acme.entities.Doctor;
-import org.acme.entities.Schedule;
+import org.acme.models.entities.Branch;
+import org.acme.models.entities.Doctor;
+import org.acme.models.entities.Schedule;
 import org.acme.utils.Speciality;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;

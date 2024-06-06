@@ -1,4 +1,4 @@
-package org.acme.entities;
+package org.acme.models.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

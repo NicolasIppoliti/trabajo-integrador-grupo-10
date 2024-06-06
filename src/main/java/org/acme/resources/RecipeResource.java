@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.entities.Recipe;
+import org.acme.models.entities.Recipe;
 import org.acme.repositories.RecipeRepository;
 
 import jakarta.inject.Inject;

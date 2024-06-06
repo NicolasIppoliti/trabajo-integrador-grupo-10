@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.entities.Branch;
+import org.acme.models.entities.Branch;
 import org.acme.repositories.BranchRepository;
 
 import jakarta.inject.Inject;
