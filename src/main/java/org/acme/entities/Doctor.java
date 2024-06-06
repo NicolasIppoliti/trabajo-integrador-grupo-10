@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.acme.utils.Speciality;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,8 +36,10 @@ public class Doctor {
     private Long id;
 
     @NotBlank(message = "El nombre no puede estar vacio")
+    @JsonProperty("first_name")
     private String firstName;
     @NotBlank(message = "El apellido no puede estar vacio")
+    @JsonProperty("last_name")
     private String lastName;
     @NotNull
     private int dni;

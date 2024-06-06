@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -25,8 +29,11 @@ public class Recipe {
 
     @ManyToOne
     @NotNull(message = "Turno no puede ser vacio.")
+    @JsonBackReference
     private Appointment appointment;
 
     @NotNull(message = "Fecha de emision no puede ser vacio.")
+    @JsonProperty("issue_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
 }
