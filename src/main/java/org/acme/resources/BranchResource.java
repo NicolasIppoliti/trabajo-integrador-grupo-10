@@ -20,12 +20,14 @@ public class BranchResource {
     BranchRepository branchRepository;
 
     @GET
+    @Transactional
     public Response getBranches() {
         List<Branch> branches = branchRepository.listAll();
         return Response.ok(branches).build();
     }
 
     @GET
+    @Transactional
     @Path("/{id}")
     public Response getBranchById(@PathParam("id") Long id) {
         Branch branch = branchRepository.findById(id);
@@ -55,9 +57,9 @@ public class BranchResource {
         branch.setAddress(updatedBranch.getAddress());
         branch.setCity(updatedBranch.getCity());
         updatedBranch.setId(null);
-        branchRepository.persist(updatedBranch);
+        branchRepository.persist(branch);
 
-        return Response.ok(updatedBranch).build();
+        return Response.ok(branch).build();
     }
 
     @DELETE
