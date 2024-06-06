@@ -54,4 +54,3 @@ public class ScheduleResource {
         scheduleRepository.delete(entity);
     }
 }
-
