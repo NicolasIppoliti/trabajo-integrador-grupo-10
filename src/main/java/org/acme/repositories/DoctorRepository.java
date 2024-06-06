@@ -3,6 +3,7 @@ package org.acme.repositories;
 import java.util.List;
 import java.util.Set;
 
+import org.acme.entities.Branch;
 import org.acme.entities.Doctor;
 import org.acme.entities.Schedule;
 import org.acme.utils.Speciality;
@@ -13,14 +14,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class DoctorRepository implements PanacheRepository<Doctor> {
 
-
-public List<Doctor> findByName(String name) {
-        return find("name", name).list();
-    }
-
-    public List<Doctor> findBySurname(String surname) {
-        return find("surname", surname).list();
-    }
 
     public Doctor findByDni(int dni) {
         return find("dni", dni).firstResult();
@@ -38,4 +31,7 @@ public List<Doctor> findByName(String name) {
         return null;
     }
 
+    public List<Doctor> findByBranch(Branch branch) {
+        return find("branch", branch).list();
+    }
 }
