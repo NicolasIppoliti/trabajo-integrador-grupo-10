@@ -4,8 +4,11 @@ import org.acme.entities.Recipe;
 import org.acme.repositories.RecipeRepository;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/recetas")
@@ -17,37 +20,58 @@ public class RecipeResource {
 	RecipeRepository recipeRepository;
 	
     @GET
-    public List<Recipe> getRecipes() {
-        return recipeRepository.listAll();
+    @Transactional
+    public Response getRecipes() {
+        List<Recipe> recipes = recipeRepository.listAll();
+        return Response.ok(recipes).build();
+    }
+    
+    @GET
+    @Transactional
+    @Path("/{id}")
+    public Response getBranchById(@PathParam("id") Long id) {
+    	Recipe recipe = recipeRepository.findById(id);
+        return Response.ok(recipe).build();
     }
 
     @POST
-    public Recipe createRecipe(Recipe recipe) {
+    @Transactional
+    public Response createRecipe(Recipe recipe) {
+    	recipe.setId(null);
     	recipeRepository.persist(recipe);
-        return recipe;
+        return Response.status(Response.Status.CREATED).entity(recipe).build();
     }
 
     @PUT
+    @Transactional
     @Path("/{id}")
-    public Recipe updateRecipe(@PathParam("id") Long id, Recipe recipe) {
-    	Recipe entity = recipeRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Receta not found", 404);
-        }
-        entity.setDescription(recipe.getDescription());
-        entity.setAppointment(recipe.getAppointment());
-        entity.setIssueDate(recipe.getIssueDate());
-        recipeRepository.persist(entity);
-        return entity;
+    public Response updateRecipe(@PathParam("id") Long id, Recipe updatedRecipe) {
+    	Recipe recipe = recipeRepository.findById(id);
+        if (recipe == null) {
+        	return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Receta no encontrada con el ID: " + id)
+                    .build();
+        	}
+        recipe.setDescription(updatedRecipe.getDescription());
+        recipe.setAppointment(updatedRecipe.getAppointment());
+        recipe.setIssueDate(updatedRecipe.getIssueDate());
+        updatedRecipe.setId(null);
+        recipeRepository.persist(recipe);
+        
+        return Response.ok(updatedRecipe).build();
     }
 
     @DELETE
+    @Transactional
     @Path("/{id}")
-    public void deleteReceta(@PathParam("id") Long id) {
-    	Recipe entity = recipeRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Receta not found", 404);
+    public Response deleteReceta(@PathParam("id") Long id) {
+    	Recipe recipe = recipeRepository.findById(id);
+    	if (recipe == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Receta no encontrada con el ID: " + id)
+                           .build();
         }
-        recipeRepository.delete(entity);
+        recipeRepository.delete(recipe);
+        return Response.noContent().build();
     }
 }

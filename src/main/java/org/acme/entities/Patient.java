@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -36,6 +39,8 @@ public class Patient {
     @NotBlank(message = "Telefono no puede ser vacio.")
     private String phone;
 
+    @JsonProperty("appointments")
     @OneToMany(mappedBy = "patient")
+    @JsonManagedReference
     private List<Appointment> appointments;
 }

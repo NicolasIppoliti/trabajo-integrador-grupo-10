@@ -20,12 +20,14 @@ public class BranchResource {
     BranchRepository branchRepository;
 
     @GET
+    @Transactional
     public Response getBranches() {
         List<Branch> branches = branchRepository.listAll();
         return Response.ok(branches).build();
     }
 
     @GET
+    @Transactional
     @Path("/{id}")
     public Response getBranchById(@PathParam("id") Long id) {
         Branch branch = branchRepository.findById(id);

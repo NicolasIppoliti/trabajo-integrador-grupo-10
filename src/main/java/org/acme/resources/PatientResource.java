@@ -4,8 +4,11 @@ import org.acme.entities.Patient;
 import org.acme.repositories.PatientRepository;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/pacientes")
@@ -17,39 +20,60 @@ public class PatientResource {
 	PatientRepository patientRepository;
 	
     @GET
-    public List<Patient> getPatients() {
-        return patientRepository.listAll();
+    @Transactional
+    public Response getPatients() {
+        List<Patient> patients = patientRepository.listAll();
+        return Response.ok(patients).build();
+    }
+    
+    @GET
+    @Transactional
+    @Path("/{id}")
+    public Response getPatientById(@PathParam("id") Long id) {
+    	Patient patient = patientRepository.findById(id);
+        return Response.ok(patient).build();
     }
 
     @POST
-    public Patient createPatient(Patient patient) {
+    @Transactional
+    public Response createPatient(Patient patient) {
+    	patient.setId(null);
     	patientRepository.persist(patient);
-        return patient;
+        return Response.status(Response.Status.CREATED).entity(patient).build();
     }
 
     @PUT
+    @Transactional
     @Path("/{id}")
-    public Patient updatePatient(@PathParam("id") Long id, Patient patient) {
-    	Patient entity = patientRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Paciente no encontrado", 404);
+    public Response updatePatient(@PathParam("id") Long id, Patient updatedPatient) {
+    	Patient patient = patientRepository.findById(id);
+        if (patient == null) {
+        	return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Paciente no encontrado con el ID: " + id)
+                    .build();
         }
-        entity.setFirstName(patient.getFirstName());
-        entity.setLastName(patient.getLastName());
-        entity.setEmail(patient.getEmail());
-        entity.setPassword(patient.getPassword());
-        entity.setPhone(patient.getPhone());
-        patientRepository.persist(entity);
-        return entity;
+        patient.setFirstName(updatedPatient.getFirstName());
+        patient.setLastName(updatedPatient.getLastName());
+        patient.setEmail(updatedPatient.getEmail());
+        patient.setPassword(updatedPatient.getPassword());
+        patient.setPhone(updatedPatient.getPhone());
+        updatedPatient.setId(null);
+        patientRepository.persist(patient);
+        
+        return Response.ok(updatedPatient).build();
     }
 
     @DELETE
+    @Transactional
     @Path("/{id}")
-    public void deletePatient(@PathParam("id") Long id) {
-    	Patient entity = patientRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Paciente no encontrado", 404);
+    public Response deletePatient(@PathParam("id") Long id) {
+    	Patient patient = patientRepository.findById(id);
+        if (patient == null) {
+        	return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Paciente no encontrado con el ID: " + id)
+                    .build();
         }
-        patientRepository.delete(entity);
+        patientRepository.delete(patient);
+        return Response.noContent().build();
     }
 }

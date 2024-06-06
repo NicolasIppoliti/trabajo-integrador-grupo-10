@@ -4,11 +4,13 @@ import org.acme.entities.Appointment;
 import org.acme.repositories.AppointmentRepository;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/appointments")
+@Path("/turnos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AppointmentResource {
@@ -17,38 +19,59 @@ public class AppointmentResource {
     AppointmentRepository appointmentRepository;
 
     @GET
-    public List<Appointment> getAppointments() {
-        return appointmentRepository.listAll();
+    @Transactional
+    public Response getAppointments() {
+    	List<Appointment> appointments = appointmentRepository.listAll();
+        return Response.ok(appointments).build();
+    }
+    
+    @GET
+    @Transactional
+    @Path("/{id}")
+    public Response getAppointmentById(@PathParam("id") Long id) {
+        Appointment appointment = appointmentRepository.findById(id);
+        return Response.ok(appointment).build();
     }
 
     @POST
-    public Appointment createAppointment(Appointment appointment) {
+    @Transactional
+    public Response createAppointment(Appointment appointment) {
+    	appointment.setId(null);
         appointmentRepository.persist(appointment);
-        return appointment;
+        return Response.status(Response.Status.CREATED).entity(appointment).build();
     }
 
     @PUT
+    @Transactional
     @Path("/{id}")
-    public Appointment updateAppointment(@PathParam("id") Long id, Appointment appointment) {
-        Appointment entity = appointmentRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Appointment not found", 404);
+    public Response updateAppointment(@PathParam("id") Long id, Appointment updatedAppointment) {
+        Appointment appointment = appointmentRepository.findById(id);
+        if (appointment == null) {
+        	return Response.status(Response.Status.NOT_FOUND)
+        			.entity("Turno no encontrado con el ID: " + id)
+        			.build();
         }
-        entity.setPatient(appointment.getPatient());
-        entity.setDateHour(appointment.getDateHour());
-        entity.setDoctor(appointment.getDoctor());
-        entity.setQueryReason(appointment.getQueryReason());
-        appointmentRepository.persist(entity);
-        return entity;
+        appointment.setPatient(updatedAppointment.getPatient());
+        appointment.setDateHour(updatedAppointment.getDateHour());
+        appointment.setDoctor(updatedAppointment.getDoctor());
+        appointment.setQueryReason(updatedAppointment.getQueryReason());
+        updatedAppointment.setId(null);
+        appointmentRepository.persist(appointment);
+        
+        return Response.ok(updatedAppointment).build();
     }
 
     @DELETE
+    @Transactional
     @Path("/{id}")
-    public void deleteAppointment(@PathParam("id") Long id) {
-        Appointment entity = appointmentRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Appointment not found", 404);
+    public Response deleteAppointment(@PathParam("id") Long id) {
+        Appointment appointment = appointmentRepository.findById(id);
+        if (appointment == null) {
+        	return Response.status(Response.Status.NOT_FOUND)
+        			.entity("Turno no encontrado con el ID: " + id)
+        			.build();
         }
-        appointmentRepository.delete(entity);
+        appointmentRepository.delete(appointment);
+        return Response.noContent().build();
     }
 }
