@@ -8,11 +8,11 @@ import org.acme.entities.Doctor;
 import org.acme.entities.Schedule;
 import org.acme.utils.Speciality;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class DoctorRepository implements PanacheRepository<Doctor> {
+public class DoctorRepository implements PanacheRepositoryBase<Doctor, Long> {
 
 
     public Doctor findByDni(int dni) {
