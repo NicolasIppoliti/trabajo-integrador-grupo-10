@@ -39,5 +39,4 @@ public class Schedule {
     private LocalTime entry_time;
     @NotNull
     private LocalTime departure_time;
-
 }

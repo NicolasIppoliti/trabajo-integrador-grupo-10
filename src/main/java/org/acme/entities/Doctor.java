@@ -53,5 +53,4 @@ public class Doctor {
 
     @ManyToOne
     private Branch branch;
-    
 }
