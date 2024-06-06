@@ -1,6 +1,6 @@
 package org.acme.repositories;
 
-import org.acme.entities.Recipe;
+import org.acme.models.entities.Recipe;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 

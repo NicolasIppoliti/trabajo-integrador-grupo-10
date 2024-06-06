@@ -2,10 +2,13 @@ package org.acme.resources;
 
 import java.util.List;
 
-import org.acme.entities.Doctor;
+import org.acme.models.entities.Branch;
+import org.acme.models.entities.Doctor;
+import org.acme.repositories.BranchRepository;
 import org.acme.repositories.DoctorRepository;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -16,6 +19,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/doctors")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,41 +28,66 @@ public class DoctorResource {
 
 	@Inject
 	DoctorRepository doctorRepository;
+
+    BranchRepository branchRepository;
 	
     @GET
-    public List<Doctor> getDoctors() {
-        return doctorRepository.listAll();
+    @Transactional
+    public Response getDoctors() {
+        List<Doctor> doctors = doctorRepository.listAll();
+        return Response.ok(doctors).build();
     }
+
+    @GET
+    @Transactional
+    @Path("/{id}")
+    public Response getDoctorById(@PathParam("id") Long id) {
+        Doctor doctor = doctorRepository.findById(id);
+        return Response.ok(doctor).build();
+    }
+
 
     @POST
-    public Doctor createDoctor(Doctor doctor) {
-    	doctorRepository.persist(doctor);
-        return doctor;
+    @Transactional
+    public Response createDoctor(Doctor doctor) {
+        doctor.setId(null);
+        doctorRepository.persist(doctor);
+        return Response.status(Response.Status.CREATED).entity(doctor).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    public Doctor updateDoctor(@PathParam("id") Long id, Doctor doctor) {
-    	Doctor entity = doctorRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Doctor no encontrado", 404);
-        }
-        entity.setFirstName(doctor.getFirstName());
-        entity.setLastName(doctor.getLastName());
-        entity.setDni(doctor.getDni());
-        entity.setSpeciality(doctor.getSpeciality());
-        entity.setBranch(doctor.getBranch());
-        doctorRepository.persist(entity);
-        return entity;
-    }
+    // @PUT
+    // @Transactional
+    // @Path("/{id}")
+    // public Response updateDoctor(@PathParam("id") Long id, Doctor updatedDoctor) {
+    //     Doctor doctor = doctorRepository.findById(id);
+    //     Branch branch = branchRepository.findById(id;)
+    //     if (doctor == null) {
+    //         return Response.status(Response.Status.NOT_FOUND)
+    //                        .entity("Doctor not found with id " + id)
+    //                        .build();
+    //     }
+    //     doctor.setFirstName(updatedDoctor.getFirstName());
+    //     doctor.setLastName(updatedDoctor.getLastName());
+    //     doctor.setDni(updatedDoctor.getDni());
+    //     doctor.setSpeciality(updatedDoctor.getSpeciality());
+    //     doctor.setDni(updatedDoctor.getDni());
+    //     updatedDoctor.setBranch(null);
+    //     doctorRepository.persist(doctor);
+
+    //     return Response.ok(doctor).build();
+    // }
 
     @DELETE
+    @Transactional
     @Path("/{id}")
-    public void deleteDoctor(@PathParam("id") Long id) {
-    	Doctor entity = doctorRepository.findById(id);
-        if (entity == null) {
-            throw new WebApplicationException("Paciente no encontrado", 404);
+    public Response deleteDoctor(@PathParam("id") Long id) {
+        Doctor doctor = doctorRepository.findById(id);
+        if (doctor == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Doctor not found with id " + id)
+                           .build();
         }
-        doctorRepository.delete(entity);
+        doctorRepository.delete(doctor);
+        return Response.noContent().build();
     }
 }

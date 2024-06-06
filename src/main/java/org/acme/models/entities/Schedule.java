@@ -1,4 +1,4 @@
-package org.acme.entities;
+package org.acme.models.entities;
 
 import java.time.LocalTime;
 
@@ -12,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +25,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 
-@Table(name = "schedules")
+@Table(name = "schedules",
+uniqueConstraints = @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}))
 public class Schedule {
 
     @Id
@@ -32,9 +35,12 @@ public class Schedule {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "day")
     private Day day;
     @NotNull
+    @Column(name = "entry_time")
     private LocalTime entry_time;
     @NotNull
+    @Column(name = "departure_time")
     private LocalTime departure_time;
 }

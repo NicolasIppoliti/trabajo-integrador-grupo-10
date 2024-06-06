@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.entities.Patient;
+import org.acme.models.entities.Patient;
 import org.acme.repositories.PatientRepository;
 
 import jakarta.inject.Inject;

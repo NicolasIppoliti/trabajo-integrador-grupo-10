@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.entities.Appointment;
+import org.acme.models.entities.Appointment;
 import org.acme.repositories.AppointmentRepository;
 
 import jakarta.inject.Inject;

@@ -2,7 +2,7 @@ package org.acme.resources;
 
 import java.util.List;
 
-import org.acme.entities.Schedule;
+import org.acme.models.entities.Schedule;
 import org.acme.repositories.ScheduleRepository;
 
 import jakarta.inject.Inject;

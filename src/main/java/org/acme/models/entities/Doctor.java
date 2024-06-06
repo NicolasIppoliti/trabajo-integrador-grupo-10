@@ -1,4 +1,4 @@
-package org.acme.entities;
+package org.acme.models.entities;
 
 import java.util.HashSet;
 import java.util.Set;
