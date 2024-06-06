@@ -34,9 +34,9 @@ public class Doctor {
     private Long id;
 
     @NotBlank(message = "El nombre no puede estar vacio")
-    private String name;
+    private String firstName;
     @NotBlank(message = "El apellido no puede estar vacio")
-    private String surname;
+    private String lastName;
     @NotNull
     private int dni;
     @NotNull
