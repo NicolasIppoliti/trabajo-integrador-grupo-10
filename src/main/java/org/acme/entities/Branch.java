@@ -36,5 +36,4 @@ public class Branch {
 
     @OneToMany
     private Set<Doctor> doctors = new HashSet<>();
-    
 }

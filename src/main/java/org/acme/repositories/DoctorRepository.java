@@ -37,5 +37,4 @@ public List<Doctor> findByName(String name) {
         }
         return null;
     }
-
 }

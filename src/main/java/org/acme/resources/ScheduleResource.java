@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.acme.entities.Schedule;
 import org.acme.repositories.ScheduleRepository;
-import org.acme.repositories.ScheduleRepository;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;

@@ -2,9 +2,7 @@ package org.acme.repositories;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 
-import org.acme.entities.Doctor;
 import org.acme.entities.Schedule;
 import org.acme.utils.Day;
 
