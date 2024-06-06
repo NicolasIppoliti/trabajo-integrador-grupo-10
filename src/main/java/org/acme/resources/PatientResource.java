@@ -60,7 +60,7 @@ public class PatientResource {
         updatedPatient.setId(null);
         patientRepository.persist(patient);
         
-        return Response.ok(updatedPatient).build();
+        return Response.ok(patient).build();
     }
 
     @DELETE

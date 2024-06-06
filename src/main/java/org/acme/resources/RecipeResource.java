@@ -58,7 +58,7 @@ public class RecipeResource {
         updatedRecipe.setId(null);
         recipeRepository.persist(recipe);
         
-        return Response.ok(updatedRecipe).build();
+        return Response.ok(recipe).build();
     }
 
     @DELETE

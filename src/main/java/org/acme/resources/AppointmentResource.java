@@ -58,7 +58,7 @@ public class AppointmentResource {
         updatedAppointment.setId(null);
         appointmentRepository.persist(appointment);
         
-        return Response.ok(updatedAppointment).build();
+        return Response.ok(appointment).build();
     }
 
     @DELETE
