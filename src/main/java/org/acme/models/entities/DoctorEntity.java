@@ -66,4 +66,8 @@ public class DoctorEntity {
     @OneToMany(mappedBy = "doctor")
     @JsonManagedReference(value = "doctor-appointments")
     private Set<AppointmentEntity> appointments = new HashSet<>();
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

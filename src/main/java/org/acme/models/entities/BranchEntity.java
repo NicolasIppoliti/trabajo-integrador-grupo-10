@@ -29,4 +29,8 @@ public class BranchEntity {
     
     @NotBlank(message = "La ciudad del centro medico no puede estar vacía")
     private String city;
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
