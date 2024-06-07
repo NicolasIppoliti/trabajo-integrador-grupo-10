@@ -1,17 +1,11 @@
 package org.acme.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "appointments")
 public class AppointmentEntity {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,4 +37,8 @@ public class AppointmentEntity {
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")
     private String queryReason;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

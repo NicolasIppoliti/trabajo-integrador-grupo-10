@@ -1,9 +1,8 @@
 package org.acme.resources;
 
-import org.acme.models.entities.AppointmentEntity;
-import org.acme.repositories.AppointmentRepository;
+import org.acme.domain.Appointment;
+import org.acme.services.AppointmentService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,17 +15,17 @@ import java.util.List;
 public class AppointmentResource {
 
     @Inject
-    AppointmentRepository appointmentRepository;
+    AppointmentService service;
 
     @GET
-    public List<AppointmentEntity> getAll() {
-        return appointmentRepository.listAll();
+    public List<Appointment> getAll() {
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        AppointmentEntity appointment = appointmentRepository.findById(id);
+        Appointment appointment = service.getById(id);
         if (appointment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,36 +33,26 @@ public class AppointmentResource {
     }
 
     @POST
-    @Transactional
-    public Response create(AppointmentEntity appointment) {
-    	appointmentRepository.persist(appointment);
-        return Response.status(Response.Status.CREATED).entity(appointment).build();
+    public Response create(Appointment appointment) {
+        return Response.status(Response.Status.CREATED).entity(service.create(appointment)).build();
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, AppointmentEntity appointment) {
-        AppointmentEntity existingAppointment = appointmentRepository.findById(id);
-        if (existingAppointment == null) {
+    public Response update(@PathParam("id") Long id, Appointment appointment) {
+        Appointment updatedAppointment = service.update(id, appointment);
+        if (updatedAppointment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingAppointment.setPatient(appointment.getPatient());
-        existingAppointment.setDateHour(appointment.getDateHour());
-        existingAppointment.setDoctor(appointment.getDoctor());
-        existingAppointment.setQueryReason(appointment.getQueryReason());
-        return Response.ok(existingAppointment).build();
+        return Response.ok(updatedAppointment).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        AppointmentEntity existingAppointment = appointmentRepository.findById(id);
-        if (existingAppointment == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        appointmentRepository.delete(existingAppointment);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

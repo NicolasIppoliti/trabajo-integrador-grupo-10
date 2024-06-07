@@ -1,9 +1,8 @@
 package org.acme.resources;
 
-import org.acme.models.entities.ScheduleEntity;
-import org.acme.repositories.ScheduleRepository;
+import org.acme.domain.Schedule;
+import org.acme.services.ScheduleService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,17 +15,17 @@ import java.util.List;
 public class ScheduleResource {
 
     @Inject
-    ScheduleRepository scheduleRepository;
+    ScheduleService service;
 
     @GET
-    public List<ScheduleEntity> getAll() {
-        return scheduleRepository.listAll();
+    public List<Schedule> getAll() {
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        ScheduleEntity schedule = scheduleRepository.findById(id);
+        Schedule schedule = service.getById(id);
         if (schedule == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,35 +33,31 @@ public class ScheduleResource {
     }
 
     @POST
-    @Transactional
-    public Response create(ScheduleEntity schedule) {
-    	scheduleRepository.persist(schedule);
-        return Response.status(Response.Status.CREATED).entity(schedule).build();
+    public Response create(Schedule schedule) {
+        try {
+            Schedule createdSchedule = service.create(schedule);
+            return Response.status(Response.Status.CREATED).entity(createdSchedule).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, ScheduleEntity schedule) {
-        ScheduleEntity existingSchedule = scheduleRepository.findById(id);
-        if (existingSchedule == null) {
+    public Response update(@PathParam("id") Long id, Schedule schedule) {
+        Schedule updatedSchedule = service.update(id, schedule);
+        if (updatedSchedule == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingSchedule.setDay(schedule.getDay());
-        existingSchedule.setEntryTime(schedule.getEntryTime());
-        existingSchedule.setDepartureTime(schedule.getDepartureTime());
-        return Response.ok(existingSchedule).build();
+        return Response.ok(updatedSchedule).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        ScheduleEntity existingSchedule = scheduleRepository.findById(id);
-        if (existingSchedule == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        scheduleRepository.delete(existingSchedule);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

@@ -1,46 +1,40 @@
 package org.acme.models.entities;
 
-import java.time.LocalTime;
-
-import org.acme.utils.Day;
-
-import io.smallrye.common.constraint.NotNull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import java.time.LocalTime;
+import org.acme.utils.Day;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
-@EqualsAndHashCode(exclude = "id")
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
-@Table(name = "schedules",
-uniqueConstraints = @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}))
+@Table(name = "schedules", uniqueConstraints = @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}))
 public class ScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @NotNull
+    @NotNull(message = "Day cannot be null")
     @Enumerated(EnumType.STRING)
     @Column(name = "day")
+    @JsonProperty("day")
     private Day day;
-    @NotNull
+
+    @NotNull(message = "Entry time cannot be null")
     @Column(name = "entry_time")
+    @JsonProperty("entryTime")
     private LocalTime entryTime;
-    @NotNull
+
+    @NotNull(message = "Departure time cannot be null")
     @Column(name = "departure_time")
+    @JsonProperty("departureTime")
     private LocalTime departureTime;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

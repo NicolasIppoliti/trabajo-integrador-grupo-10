@@ -1,19 +1,9 @@
 package org.acme.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @NoArgsConstructor
@@ -24,16 +14,17 @@ public class RecipeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Descripcion no puede ser vacio.")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne
-    @NotNull(message = "Turno no puede ser vacio.")
-    @JsonBackReference
+    @JoinColumn(name = "appointment_id", nullable = false)
     private AppointmentEntity appointment;
 
-    @NotNull(message = "Fecha de emision no puede ser vacio.")
-    @JsonProperty("issue_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

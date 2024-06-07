@@ -1,9 +1,8 @@
 package org.acme.resources;
 
-import org.acme.models.entities.PatientEntity;
-import org.acme.repositories.PatientRepository;
+import org.acme.domain.Patient;
+import org.acme.services.PatientService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,17 +15,17 @@ import java.util.List;
 public class PatientResource {
 
     @Inject
-    PatientRepository patientRepository;
+    PatientService service;
 
     @GET
-    public List<PatientEntity> getAll() {
-        return patientRepository.listAll();
+    public List<Patient> getAll() {
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        PatientEntity patient = patientRepository.findById(id);
+        Patient patient = service.getById(id);
         if (patient == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,37 +33,26 @@ public class PatientResource {
     }
 
     @POST
-    @Transactional
-    public Response create(PatientEntity patient) {
-    	patientRepository.persist(patient);
-        return Response.status(Response.Status.CREATED).entity(patient).build();
+    public Response create(Patient patient) {
+        return Response.status(Response.Status.CREATED).entity(service.create(patient)).build();
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, PatientEntity patient) {
-        PatientEntity existingPatient = patientRepository.findById(id);
-        if (existingPatient == null) {
+    public Response update(@PathParam("id") Long id, Patient patient) {
+        Patient updatedPatient = service.update(id, patient);
+        if (updatedPatient == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingPatient.setFirstName(patient.getFirstName());
-        existingPatient.setLastName(patient.getLastName());
-        existingPatient.setEmail(patient.getEmail());
-        existingPatient.setPassword(patient.getPassword());
-        existingPatient.setPhone(patient.getPhone());
-        return Response.ok(existingPatient).build();
+        return Response.ok(updatedPatient).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        PatientEntity existingPatient = patientRepository.findById(id);
-        if (existingPatient == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        patientRepository.delete(existingPatient);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

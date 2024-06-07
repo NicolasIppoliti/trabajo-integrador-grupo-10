@@ -9,6 +9,6 @@ import org.acme.utils.Day;
 public class Schedule {
     private Long id;
     private Day day;
-    private LocalTime entry_time;
-    private LocalTime departure_time;
+    private LocalTime entryTime;
+    private LocalTime departureTime;
 }

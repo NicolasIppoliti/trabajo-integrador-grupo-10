@@ -50,7 +50,7 @@ public class RecipeService {
     public boolean delete(Long id) {
         var existingEntity = repository.findById(id);
         if (existingEntity != null) {
-            repository.delete(existingEntity);
+        	repository.delete(existingEntity);
             return true;
         }
         return false;

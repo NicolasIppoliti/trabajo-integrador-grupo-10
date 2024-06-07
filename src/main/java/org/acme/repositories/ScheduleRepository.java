@@ -6,11 +6,11 @@ import java.util.List;
 import org.acme.models.entities.ScheduleEntity;
 import org.acme.utils.Day;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class ScheduleRepository implements PanacheRepository <ScheduleEntity>{
+public class ScheduleRepository implements PanacheRepositoryBase<ScheduleEntity, Long> {
     
        public List<ScheduleEntity> findByDay(Day day) {
         return find("day", day).list();
