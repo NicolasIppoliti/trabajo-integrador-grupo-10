@@ -6,7 +6,7 @@ import org.acme.repositories.PatientRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +18,9 @@ public class PatientService {
 
     @Inject
     PatientMapper mapper;
+
+    @Inject
+    EntityManager entityManager;
 
     public List<Patient> getAll() {
         return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
@@ -40,7 +43,7 @@ public class PatientService {
         if (existingEntity != null) {
             var updatedEntity = mapper.toEntity(patient);
             updatedEntity.setId(id);
-            repository.persist(updatedEntity);
+            updatedEntity = entityManager.merge(updatedEntity);
             return mapper.toDomain(updatedEntity);
         }
         return null;

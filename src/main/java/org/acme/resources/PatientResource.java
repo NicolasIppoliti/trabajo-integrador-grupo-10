@@ -6,7 +6,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 import java.util.List;
 
 @Path("/pacientes")
@@ -24,35 +23,30 @@ public class PatientResource {
 
     @GET
     @Path("/{id}")
-    public Response getById(@PathParam("id") Long id) {
-        Patient patient = service.getById(id);
-        if (patient == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(patient).build();
+    public Patient getById(@PathParam("id") Long id) {
+        return service.getById(id);
     }
 
     @POST
     public Response create(Patient patient) {
-        return Response.status(Response.Status.CREATED).entity(service.create(patient)).build();
+        Patient created = service.create(patient);
+        return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Long id, Patient patient) {
-        Patient updatedPatient = service.update(id, patient);
-        if (updatedPatient == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(updatedPatient).build();
+    public Patient update(@PathParam("id") Long id, Patient patient) {
+        return service.update(id, patient);
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        if (service.delete(id)) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+        boolean deleted = service.delete(id);
+        if (deleted) {
+            return Response.noContent().build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }
