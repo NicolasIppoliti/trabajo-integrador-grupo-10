@@ -6,7 +6,7 @@ import org.acme.repositories.RecipeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +18,9 @@ public class RecipeService {
 
     @Inject
     RecipeMapper mapper;
+
+    @Inject
+    EntityManager entityManager;
 
     public List<Recipe> getAll() {
         return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
@@ -40,7 +43,7 @@ public class RecipeService {
         if (existingEntity != null) {
             var updatedEntity = mapper.toEntity(recipe);
             updatedEntity.setId(id);
-            repository.persist(updatedEntity);
+            updatedEntity = entityManager.merge(updatedEntity); // Use entityManager to merge
             return mapper.toDomain(updatedEntity);
         }
         return null;
@@ -50,7 +53,7 @@ public class RecipeService {
     public boolean delete(Long id) {
         var existingEntity = repository.findById(id);
         if (existingEntity != null) {
-        	repository.delete(existingEntity);
+            repository.delete(existingEntity);
             return true;
         }
         return false;
