@@ -41,6 +41,6 @@ public class Patient {
 
     @JsonProperty("appointments")
     @OneToMany(mappedBy = "patient")
-    @JsonManagedReference
+    @JsonManagedReference(value = "patient-appointments")
     private List<Appointment> appointments;
 }

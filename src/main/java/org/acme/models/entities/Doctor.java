@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.acme.utils.Speciality;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.smallrye.common.constraint.NotNull;
@@ -18,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -38,11 +40,14 @@ public class Doctor {
     @NotBlank(message = "El nombre no puede estar vacio")
     @JsonProperty("first_name")
     private String firstName;
+    
     @NotBlank(message = "El apellido no puede estar vacio")
     @JsonProperty("last_name")
     private String lastName;
+    
     @NotNull
     private int dni;
+    
     @NotNull
     @Enumerated(EnumType.STRING)
     private Speciality speciality;
@@ -57,4 +62,8 @@ public class Doctor {
 
     @ManyToOne
     private Branch branch;
+    
+    @OneToMany(mappedBy = "doctor")
+    @JsonManagedReference(value = "doctor-appointments")
+    private Set<Appointment> appointments = new HashSet<>();
 }

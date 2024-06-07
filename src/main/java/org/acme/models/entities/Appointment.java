@@ -28,7 +28,7 @@ public class Appointment {
 
     @ManyToOne
     @NotNull(message = "Paciente no puede ser vacio.")
-    @JsonBackReference
+    @JsonBackReference(value = "patient-appointments")
     private Patient patient;
 
     @NotNull(message = "Día y fecha no puede ser vacios.")
@@ -38,7 +38,7 @@ public class Appointment {
 
     @ManyToOne
     @NotNull(message = "Especialista no puede ser vacio.")
-    @JsonManagedReference
+    @JsonBackReference(value = "doctor-appointments")
     private Doctor doctor;
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")
