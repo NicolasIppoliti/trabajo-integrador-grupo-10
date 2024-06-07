@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "doctors")
-public class Doctor {
+public class DoctorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,12 +58,12 @@ public class Doctor {
         joinColumns = @JoinColumn(name = "doctor_id"),
         inverseJoinColumns = @JoinColumn(name = "schedule_id")
     )
-    private Set<Schedule> schedules = new HashSet<>();
+    private Set<ScheduleEntity> schedules = new HashSet<>();
 
     @ManyToOne
-    private Branch branch;
+    private BranchEntity branch;
     
     @OneToMany(mappedBy = "doctor")
     @JsonManagedReference(value = "doctor-appointments")
-    private Set<Appointment> appointments = new HashSet<>();
+    private Set<AppointmentEntity> appointments = new HashSet<>();
 }

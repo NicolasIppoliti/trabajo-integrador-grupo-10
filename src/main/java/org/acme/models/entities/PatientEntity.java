@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @Entity
 @Table(name = "patients")
-public class Patient {
+public class PatientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,5 +42,5 @@ public class Patient {
     @JsonProperty("appointments")
     @OneToMany(mappedBy = "patient")
     @JsonManagedReference(value = "patient-appointments")
-    private List<Appointment> appointments;
+    private List<AppointmentEntity> appointments;
 }

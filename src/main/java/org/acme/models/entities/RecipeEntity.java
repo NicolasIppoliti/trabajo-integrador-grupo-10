@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @Entity
 @Table(name = "recipes")
-public class Recipe {
+public class RecipeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,7 +30,7 @@ public class Recipe {
     @ManyToOne
     @NotNull(message = "Turno no puede ser vacio.")
     @JsonBackReference
-    private Appointment appointment;
+    private AppointmentEntity appointment;
 
     @NotNull(message = "Fecha de emision no puede ser vacio.")
     @JsonProperty("issue_date")

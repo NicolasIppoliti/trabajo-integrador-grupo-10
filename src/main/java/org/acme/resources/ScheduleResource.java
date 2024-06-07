@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Schedule;
+import org.acme.models.entities.ScheduleEntity;
 import org.acme.repositories.ScheduleRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,14 +19,14 @@ public class ScheduleResource {
     ScheduleRepository scheduleRepository;
 
     @GET
-    public List<Schedule> getAll() {
+    public List<ScheduleEntity> getAll() {
         return scheduleRepository.listAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Schedule schedule = scheduleRepository.findById(id);
+        ScheduleEntity schedule = scheduleRepository.findById(id);
         if (schedule == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -35,7 +35,7 @@ public class ScheduleResource {
 
     @POST
     @Transactional
-    public Response create(Schedule schedule) {
+    public Response create(ScheduleEntity schedule) {
     	scheduleRepository.persist(schedule);
         return Response.status(Response.Status.CREATED).entity(schedule).build();
     }
@@ -43,14 +43,14 @@ public class ScheduleResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Schedule schedule) {
-        Schedule existingSchedule = scheduleRepository.findById(id);
+    public Response update(@PathParam("id") Long id, ScheduleEntity schedule) {
+        ScheduleEntity existingSchedule = scheduleRepository.findById(id);
         if (existingSchedule == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         existingSchedule.setDay(schedule.getDay());
-        existingSchedule.setEntry_time(schedule.getEntry_time());
-        existingSchedule.setDeparture_time(schedule.getDeparture_time());
+        existingSchedule.setEntryTime(schedule.getEntryTime());
+        existingSchedule.setDepartureTime(schedule.getDepartureTime());
         return Response.ok(existingSchedule).build();
     }
 
@@ -58,7 +58,7 @@ public class ScheduleResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Schedule existingSchedule = scheduleRepository.findById(id);
+        ScheduleEntity existingSchedule = scheduleRepository.findById(id);
         if (existingSchedule == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

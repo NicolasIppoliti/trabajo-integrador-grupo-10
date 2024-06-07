@@ -1,32 +1,31 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Recipe;
-import org.acme.repositories.RecipeRepository;
+import org.acme.domain.Recipe;
+import org.acme.services.RecipeService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-@Path("/recetas")
+@Path("/recipes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class RecipeResource {
 
     @Inject
-    RecipeRepository recipeRepository;
+    RecipeService service;
 
     @GET
     public List<Recipe> getAll() {
-        return recipeRepository.listAll();
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Recipe recipe = recipeRepository.findById(id);
+        Recipe recipe = service.getById(id);
         if (recipe == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,35 +33,26 @@ public class RecipeResource {
     }
 
     @POST
-    @Transactional
     public Response create(Recipe recipe) {
-    	recipeRepository.persist(recipe);
-        return Response.status(Response.Status.CREATED).entity(recipe).build();
+        return Response.status(Response.Status.CREATED).entity(service.create(recipe)).build();
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
     public Response update(@PathParam("id") Long id, Recipe recipe) {
-        Recipe existingRecipe = recipeRepository.findById(id);
-        if (existingRecipe == null) {
+        Recipe updatedRecipe = service.update(id, recipe);
+        if (updatedRecipe == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingRecipe.setDescription(recipe.getDescription());
-        existingRecipe.setAppointment(recipe.getAppointment());
-        existingRecipe.setIssueDate(recipe.getIssueDate());
-        return Response.ok(existingRecipe).build();
+        return Response.ok(updatedRecipe).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Recipe existingRecipe = recipeRepository.findById(id);
-        if (existingRecipe == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        recipeRepository.delete(existingRecipe);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

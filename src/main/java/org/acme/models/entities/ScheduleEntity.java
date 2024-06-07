@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 @Table(name = "schedules",
 uniqueConstraints = @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}))
-public class Schedule {
+public class ScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +39,8 @@ public class Schedule {
     private Day day;
     @NotNull
     @Column(name = "entry_time")
-    private LocalTime entry_time;
+    private LocalTime entryTime;
     @NotNull
     @Column(name = "departure_time")
-    private LocalTime departure_time;
+    private LocalTime departureTime;
 }

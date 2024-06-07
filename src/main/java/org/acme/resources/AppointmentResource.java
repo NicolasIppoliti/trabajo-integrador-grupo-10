@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Appointment;
+import org.acme.models.entities.AppointmentEntity;
 import org.acme.repositories.AppointmentRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,14 +19,14 @@ public class AppointmentResource {
     AppointmentRepository appointmentRepository;
 
     @GET
-    public List<Appointment> getAll() {
+    public List<AppointmentEntity> getAll() {
         return appointmentRepository.listAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Appointment appointment = appointmentRepository.findById(id);
+        AppointmentEntity appointment = appointmentRepository.findById(id);
         if (appointment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -35,7 +35,7 @@ public class AppointmentResource {
 
     @POST
     @Transactional
-    public Response create(Appointment appointment) {
+    public Response create(AppointmentEntity appointment) {
     	appointmentRepository.persist(appointment);
         return Response.status(Response.Status.CREATED).entity(appointment).build();
     }
@@ -43,8 +43,8 @@ public class AppointmentResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Appointment appointment) {
-        Appointment existingAppointment = appointmentRepository.findById(id);
+    public Response update(@PathParam("id") Long id, AppointmentEntity appointment) {
+        AppointmentEntity existingAppointment = appointmentRepository.findById(id);
         if (existingAppointment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -59,7 +59,7 @@ public class AppointmentResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Appointment existingAppointment = appointmentRepository.findById(id);
+        AppointmentEntity existingAppointment = appointmentRepository.findById(id);
         if (existingAppointment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

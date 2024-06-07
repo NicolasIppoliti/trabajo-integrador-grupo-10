@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Patient;
+import org.acme.models.entities.PatientEntity;
 import org.acme.repositories.PatientRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,14 +19,14 @@ public class PatientResource {
     PatientRepository patientRepository;
 
     @GET
-    public List<Patient> getAll() {
+    public List<PatientEntity> getAll() {
         return patientRepository.listAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Patient patient = patientRepository.findById(id);
+        PatientEntity patient = patientRepository.findById(id);
         if (patient == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -35,7 +35,7 @@ public class PatientResource {
 
     @POST
     @Transactional
-    public Response create(Patient patient) {
+    public Response create(PatientEntity patient) {
     	patientRepository.persist(patient);
         return Response.status(Response.Status.CREATED).entity(patient).build();
     }
@@ -43,8 +43,8 @@ public class PatientResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Patient patient) {
-        Patient existingPatient = patientRepository.findById(id);
+    public Response update(@PathParam("id") Long id, PatientEntity patient) {
+        PatientEntity existingPatient = patientRepository.findById(id);
         if (existingPatient == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -60,7 +60,7 @@ public class PatientResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Patient existingPatient = patientRepository.findById(id);
+        PatientEntity existingPatient = patientRepository.findById(id);
         if (existingPatient == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

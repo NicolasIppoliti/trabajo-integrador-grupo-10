@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Branch;
+import org.acme.models.entities.BranchEntity;
 import org.acme.repositories.BranchRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,14 +19,14 @@ public class BranchResource {
     BranchRepository branchRepository;
 
     @GET
-    public List<Branch> getAll() {
+    public List<BranchEntity> getAll() {
         return branchRepository.listAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Branch branch = branchRepository.findById(id);
+        BranchEntity branch = branchRepository.findById(id);
         if (branch == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -35,7 +35,7 @@ public class BranchResource {
 
     @POST
     @Transactional
-    public Response create(Branch branch) {
+    public Response create(BranchEntity branch) {
     	branchRepository.persist(branch);
         return Response.status(Response.Status.CREATED).entity(branch).build();
     }
@@ -43,8 +43,8 @@ public class BranchResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Branch branch) {
-        Branch existingBranch = branchRepository.findById(id);
+    public Response update(@PathParam("id") Long id, BranchEntity branch) {
+        BranchEntity existingBranch = branchRepository.findById(id);
         if (existingBranch == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -58,7 +58,7 @@ public class BranchResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Branch existingBranch = branchRepository.findById(id);
+        BranchEntity existingBranch = branchRepository.findById(id);
         if (existingBranch == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

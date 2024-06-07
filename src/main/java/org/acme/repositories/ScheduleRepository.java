@@ -3,24 +3,24 @@ package org.acme.repositories;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.acme.models.entities.Schedule;
+import org.acme.models.entities.ScheduleEntity;
 import org.acme.utils.Day;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class ScheduleRepository implements PanacheRepository <Schedule>{
+public class ScheduleRepository implements PanacheRepository <ScheduleEntity>{
     
-       public List<Schedule> findByDay(Day day) {
+       public List<ScheduleEntity> findByDay(Day day) {
         return find("day", day).list();
     }
 
-    public List<Schedule> findByEntryTime(LocalTime entryTime) {
+    public List<ScheduleEntity> findByEntryTime(LocalTime entryTime) {
         return find("entry_time", entryTime).list();
     }
 
-    public List<Schedule> findByDepartureTime(LocalTime departureTime) {
+    public List<ScheduleEntity> findByDepartureTime(LocalTime departureTime) {
         return find("departure_time", departureTime).list();
     }
 }

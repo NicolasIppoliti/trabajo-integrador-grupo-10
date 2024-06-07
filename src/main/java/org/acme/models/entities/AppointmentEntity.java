@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @Entity
 @Table(name = "appointments")
-public class Appointment {
+public class AppointmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class Appointment {
     @ManyToOne
     @NotNull(message = "Paciente no puede ser vacio.")
     @JsonBackReference(value = "patient-appointments")
-    private Patient patient;
+    private PatientEntity patient;
 
     @NotNull(message = "Día y fecha no puede ser vacios.")
     @JsonProperty("date_hour")
@@ -38,7 +38,7 @@ public class Appointment {
     @ManyToOne
     @NotNull(message = "Especialista no puede ser vacio.")
     @JsonBackReference(value = "doctor-appointments")
-    private Doctor doctor;
+    private DoctorEntity doctor;
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")
     private String queryReason;

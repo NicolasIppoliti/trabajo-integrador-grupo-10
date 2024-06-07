@@ -3,35 +3,35 @@ package org.acme.repositories;
 import java.util.List;
 import java.util.Set;
 
-import org.acme.models.entities.Branch;
-import org.acme.models.entities.Doctor;
-import org.acme.models.entities.Schedule;
+import org.acme.models.entities.BranchEntity;
+import org.acme.models.entities.DoctorEntity;
+import org.acme.models.entities.ScheduleEntity;
 import org.acme.utils.Speciality;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class DoctorRepository implements PanacheRepositoryBase<Doctor, Long> {
+public class DoctorRepository implements PanacheRepositoryBase<DoctorEntity, Long> {
 
 
-    public Doctor findByDni(int dni) {
+    public DoctorEntity findByDni(int dni) {
         return find("dni", dni).firstResult();
     }
 
-    public List<Doctor> findBySpeciality(Speciality speciality) {
+    public List<DoctorEntity> findBySpeciality(Speciality speciality) {
         return find("speciality", speciality).list();
     }
 
-    public Set<Schedule> findSchedulesByDoctorId(Long doctorId) {
-        Doctor doctor = findById(doctorId);
+    public Set<ScheduleEntity> findSchedulesByDoctorId(Long doctorId) {
+        DoctorEntity doctor = findById(doctorId);
         if (doctor != null) {
             return doctor.getSchedules();
         }
         return null;
     }
 
-    public List<Doctor> findByBranch(Branch branch) {
+    public List<DoctorEntity> findByBranch(BranchEntity branch) {
         return find("branch", branch).list();
     }
 }

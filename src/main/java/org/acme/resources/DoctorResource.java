@@ -1,6 +1,6 @@
 package org.acme.resources;
 
-import org.acme.models.entities.Doctor;
+import org.acme.models.entities.DoctorEntity;
 import org.acme.repositories.DoctorRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,14 +19,14 @@ public class DoctorResource {
     DoctorRepository doctorRepository;
 
     @GET
-    public List<Doctor> getAll() {
+    public List<DoctorEntity> getAll() {
         return doctorRepository.listAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Doctor doctor = doctorRepository.findById(id);
+        DoctorEntity doctor = doctorRepository.findById(id);
         if (doctor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -35,7 +35,7 @@ public class DoctorResource {
 
     @POST
     @Transactional
-    public Response create(Doctor doctor) {
+    public Response create(DoctorEntity doctor) {
     	doctorRepository.persist(doctor);
         return Response.status(Response.Status.CREATED).entity(doctor).build();
     }
@@ -43,8 +43,8 @@ public class DoctorResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Doctor doctor) {
-        Doctor existingDoctor = doctorRepository.findById(id);
+    public Response update(@PathParam("id") Long id, DoctorEntity doctor) {
+        DoctorEntity existingDoctor = doctorRepository.findById(id);
         if (existingDoctor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -61,7 +61,7 @@ public class DoctorResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        Doctor existingDoctor = doctorRepository.findById(id);
+        DoctorEntity existingDoctor = doctorRepository.findById(id);
         if (existingDoctor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
