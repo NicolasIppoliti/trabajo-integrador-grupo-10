@@ -1,9 +1,9 @@
 package org.acme.resources;
 
-import org.acme.models.entities.BranchEntity;
-import org.acme.repositories.BranchRepository;
+import org.acme.domain.Branch;
+import org.acme.services.BranchService;
+
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,17 +16,17 @@ import java.util.List;
 public class BranchResource {
 
     @Inject
-    BranchRepository branchRepository;
+    BranchService service;
 
     @GET
-    public List<BranchEntity> getAll() {
-        return branchRepository.listAll();
+    public List<Branch> getAll() {
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        BranchEntity branch = branchRepository.findById(id);
+        Branch branch = service.getById(id);
         if (branch == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,35 +34,31 @@ public class BranchResource {
     }
 
     @POST
-    @Transactional
-    public Response create(BranchEntity branch) {
-    	branchRepository.persist(branch);
-        return Response.status(Response.Status.CREATED).entity(branch).build();
+    public Response create(Branch branch) {
+    	try {
+            Branch createdBranch = service.create(branch);
+            return Response.status(Response.Status.CREATED).entity(createdBranch).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, BranchEntity branch) {
-        BranchEntity existingBranch = branchRepository.findById(id);
-        if (existingBranch == null) {
+    public Response update(@PathParam("id") Long id, Branch branch) {
+        Branch updatedBranch = service.update(id, branch);
+        if (updatedBranch == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingBranch.setName(branch.getName());
-        existingBranch.setAddress(branch.getAddress());
-        existingBranch.setCity(branch.getCity());
-        return Response.ok(existingBranch).build();
+        return Response.ok(updatedBranch).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        BranchEntity existingBranch = branchRepository.findById(id);
-        if (existingBranch == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        branchRepository.delete(existingBranch);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

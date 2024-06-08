@@ -5,6 +5,7 @@ import org.acme.mappers.RecipeMapper;
 import org.acme.repositories.RecipeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public class RecipeService {
 
     @Inject
     RecipeMapper mapper;
+
+    @Inject
+    EntityManager entityManager;
 
     public List<Recipe> getAll() {
         return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());

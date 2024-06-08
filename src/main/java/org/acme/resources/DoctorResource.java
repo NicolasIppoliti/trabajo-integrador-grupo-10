@@ -1,9 +1,9 @@
 package org.acme.resources;
 
-import org.acme.models.entities.DoctorEntity;
-import org.acme.repositories.DoctorRepository;
+import org.acme.domain.Doctor;
+import org.acme.services.DoctorService;
+
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -16,17 +16,17 @@ import java.util.List;
 public class DoctorResource {
 
     @Inject
-    DoctorRepository doctorRepository;
+    DoctorService service;
 
     @GET
-    public List<DoctorEntity> getAll() {
-        return doctorRepository.listAll();
+    public List<Doctor> getAll() {
+        return service.getAll();
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        DoctorEntity doctor = doctorRepository.findById(id);
+        Doctor doctor = service.getById(id);
         if (doctor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -34,38 +34,31 @@ public class DoctorResource {
     }
 
     @POST
-    @Transactional
-    public Response create(DoctorEntity doctor) {
-    	doctorRepository.persist(doctor);
-        return Response.status(Response.Status.CREATED).entity(doctor).build();
+    public Response create(Doctor doctor) {
+        try {
+            Doctor createdDoctor = service.create(doctor);
+            return Response.status(Response.Status.CREATED).entity(createdDoctor).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }    
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, DoctorEntity doctor) {
-        DoctorEntity existingDoctor = doctorRepository.findById(id);
-        if (existingDoctor == null) {
+    public Response update(@PathParam("id") Long id, Doctor doctor) {
+        Doctor updatedDoctor = service.update(id, doctor);
+        if (updatedDoctor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        existingDoctor.setFirstName(doctor.getFirstName());
-        existingDoctor.setLastName(doctor.getLastName());
-        existingDoctor.setDni(doctor.getDni());
-        existingDoctor.setSpeciality(doctor.getSpeciality());
-        existingDoctor.setSchedules(doctor.getSchedules());
-        existingDoctor.setBranch(doctor.getBranch());
-        return Response.ok(existingDoctor).build();
+        return Response.ok(updatedDoctor).build();
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        DoctorEntity existingDoctor = doctorRepository.findById(id);
-        if (existingDoctor == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (service.delete(id)) {
+            return Response.status(Response.Status.NO_CONTENT).build();
         }
-        doctorRepository.delete(existingDoctor);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }
