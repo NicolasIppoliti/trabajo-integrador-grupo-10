@@ -6,7 +6,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 import java.util.List;
 
 @Path("/horarios")
@@ -18,18 +17,27 @@ public class ScheduleResource {
     ScheduleService service;
 
     @GET
-    public List<Schedule> getAll() {
-        return service.getAll();
+    public Response getAll() {
+        try {
+            List<Schedule> schedules = service.getAll();
+            return Response.ok(schedules).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los horarios").build();
+        }
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Schedule schedule = service.getById(id);
-        if (schedule == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Schedule schedule = service.getById(id);
+            if (schedule == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Horario no encontrado").build();
+            }
+            return Response.ok(schedule).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el horario").build();
         }
-        return Response.ok(schedule).build();
     }
 
     @POST
@@ -38,26 +46,35 @@ public class ScheduleResource {
             Schedule createdSchedule = service.create(schedule);
             return Response.status(Response.Status.CREATED).entity(createdSchedule).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el horario: " + e.getMessage()).build();
         }
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, Schedule schedule) {
-        Schedule updatedSchedule = service.update(id, schedule);
-        if (updatedSchedule == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Schedule updatedSchedule = service.update(id, schedule);
+            if (updatedSchedule == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Horario no encontrado").build();
+            }
+            return Response.ok(updatedSchedule).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el horario").build();
         }
-        return Response.ok(updatedSchedule).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        if (service.delete(id)) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+        try {
+            if (service.delete(id)) {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Horario no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el horario").build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

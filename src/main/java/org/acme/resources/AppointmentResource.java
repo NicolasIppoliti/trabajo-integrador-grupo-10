@@ -6,7 +6,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 import java.util.List;
 
 @Path("/turnos")
@@ -18,41 +17,67 @@ public class AppointmentResource {
     AppointmentService service;
 
     @GET
-    public List<Appointment> getAll() {
-        return service.getAll();
+    public Response getAll() {
+        try {
+            List<Appointment> appointments = service.getAll();
+            return Response.ok(appointments).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los turnos").build();
+        }
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Appointment appointment = service.getById(id);
-        if (appointment == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Appointment appointment = service.getById(id);
+            if (appointment != null) {
+                return Response.ok(appointment).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el turno").build();
         }
-        return Response.ok(appointment).build();
     }
 
     @POST
     public Response create(Appointment appointment) {
-        return Response.status(Response.Status.CREATED).entity(service.create(appointment)).build();
+        try {
+            Appointment created = service.create(appointment);
+            return Response.status(Response.Status.CREATED).entity(created).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al crear el turno").build();
+        }
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, Appointment appointment) {
-        Appointment updatedAppointment = service.update(id, appointment);
-        if (updatedAppointment == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Appointment updated = service.update(id, appointment);
+            if (updated != null) {
+                return Response.ok(updated).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el turno").build();
         }
-        return Response.ok(updatedAppointment).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        if (service.delete(id)) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+        try {
+            boolean deleted = service.delete(id);
+            if (deleted) {
+                return Response.noContent().build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el turno").build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

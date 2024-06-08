@@ -17,36 +17,64 @@ public class PatientResource {
     PatientService service;
 
     @GET
-    public List<Patient> getAll() {
-        return service.getAll();
+    public Response getAll() {
+        try {
+            List<Patient> patients = service.getAll();
+            return Response.ok(patients).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los pacientes").build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public Patient getById(@PathParam("id") Long id) {
-        return service.getById(id);
+    public Response getById(@PathParam("id") Long id) {
+        try {
+            Patient patient = service.getById(id);
+            if (patient == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Paciente no encontrado").build();
+            }
+            return Response.ok(patient).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el paciente").build();
+        }
     }
 
     @POST
     public Response create(Patient patient) {
-        Patient created = service.create(patient);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        try {
+            Patient createdPatient = service.create(patient);
+            return Response.status(Response.Status.CREATED).entity(createdPatient).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el paciente: " + e.getMessage()).build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    public Patient update(@PathParam("id") Long id, Patient patient) {
-        return service.update(id, patient);
+    public Response update(@PathParam("id") Long id, Patient patient) {
+        try {
+            Patient updatedPatient = service.update(id, patient);
+            if (updatedPatient == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Paciente no encontrado").build();
+            }
+            return Response.ok(updatedPatient).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el paciente").build();
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        boolean deleted = service.delete(id);
-        if (deleted) {
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            if (service.delete(id)) {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Paciente no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el paciente").build();
         }
     }
 }
