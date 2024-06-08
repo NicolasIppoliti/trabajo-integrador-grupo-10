@@ -5,6 +5,7 @@ import org.acme.mappers.RecipeMapper;
 import org.acme.repositories.RecipeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.EntityManager;
 import java.util.List;
