@@ -26,6 +26,16 @@ public class AppointmentResource {
             .map(AppointmentMapper.INSTANCE::toDTO)
             .collect(Collectors.toList());
     }
+    
+    @GET
+    @Path("{id}")
+    public Response findById(@PathParam("id") Long id) {
+        AppointmentEntity appointment = appointmentService.findById(id);
+        if (appointment == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseMessage("Turno no encontrado")).build();
+        }
+        return Response.ok(AppointmentMapper.INSTANCE.toDTO(appointment)).build();
+    }
 
     @POST
     public Response add(AppointmentDTO appointmentDTO) {
@@ -79,15 +89,5 @@ public class AppointmentResource {
                            .entity(new ResponseMessage("Error al eliminar el turno: " + e.getMessage()))
                            .build();
         }
-    }
-
-    @GET
-    @Path("{id}")
-    public Response findById(@PathParam("id") Long id) {
-        AppointmentEntity appointment = appointmentService.findById(id);
-        if (appointment == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity(new ResponseMessage("Turno no encontrado")).build();
-        }
-        return Response.ok(AppointmentMapper.INSTANCE.toDTO(appointment)).build();
     }
 }

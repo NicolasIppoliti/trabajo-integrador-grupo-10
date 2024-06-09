@@ -3,6 +3,7 @@ package org.acme.resources;
 import org.acme.services.RecipeService;
 import org.acme.models.dto.RecipeDTO;
 import org.acme.models.dto.ResponseMessage;
+import org.acme.models.entities.RecipeEntity;
 import org.acme.mappers.RecipeMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -29,7 +30,7 @@ public class RecipeResource {
     @GET
     @Path("{id}")
     public Response findById(@PathParam("id") Long id) {
-        RecipeDTO recipe = RecipeMapper.INSTANCE.toDTO(recipeService.findById(id));
+        RecipeEntity recipe = recipeService.findById(id);
         if (recipe == null) {
             return Response.status(Response.Status.NOT_FOUND)
                            .entity(new ResponseMessage("Receta no encontrada"))
@@ -41,7 +42,8 @@ public class RecipeResource {
     @POST
     public Response add(RecipeDTO recipeDTO) {
         try {
-            recipeService.add(RecipeMapper.INSTANCE.toEntity(recipeDTO));
+        	RecipeEntity recipeEntity = RecipeMapper.INSTANCE.toEntity(recipeDTO);
+            recipeService.add(recipeEntity, recipeDTO.getAppointmentId());
             return Response.status(Response.Status.CREATED)
                            .entity(new ResponseMessage("Receta creada exitosamente"))
                            .build();
