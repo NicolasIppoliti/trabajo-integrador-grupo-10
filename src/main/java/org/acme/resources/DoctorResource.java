@@ -1,6 +1,8 @@
 package org.acme.resources;
 
-import org.acme.domain.Doctor;
+import org.acme.domain.DoctorRequestDTO;
+import org.acme.domain.DoctorResponseDTO;
+import org.acme.models.entities.DoctorEntity;
 import org.acme.services.DoctorService;
 
 import jakarta.inject.Inject;
@@ -43,9 +45,9 @@ public class DoctorResource {
     }
 
     @POST
-    public Response create(Doctor doctor) {
+    public Response create(DoctorRequestDTO doctor) {
         try {
-            Doctor createdDoctor = service.create(doctor);
+            DoctorEntity createdDoctor = service.create(doctor);
             return Response.status(Response.Status.CREATED).entity(createdDoctor).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el especialista: " + e.getMessage()).build();
@@ -54,9 +56,9 @@ public class DoctorResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Long id, Doctor doctor) {
+    public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {
         try {
-            Doctor updatedDoctor = service.update(id, doctor);
+            DoctorEntity updatedDoctor = service.update(id, doctor);
             if (updatedDoctor == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
             }

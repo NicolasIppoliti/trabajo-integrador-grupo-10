@@ -8,6 +8,6 @@ public class Appointment {
     private Long id;
     private Patient patient;
     private LocalDateTime dateHour;
-    private Doctor doctor;
+    private DoctorResponseDTO doctor;
     private String queryReason;
 }

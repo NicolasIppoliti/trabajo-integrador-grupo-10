@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.acme.domain.Branch;
 import org.acme.mappers.BranchMapper;
+import org.acme.models.entities.BranchEntity;
 import org.acme.repositories.BranchRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,6 +30,10 @@ public class BranchService {
 
     public Branch getById(Long id) {
         return mapper.toDomain(repository.findById(id));
+    }
+
+    public BranchEntity getBranchById(Long id) {
+        return repository.findById(id);
     }
 
     @Transactional

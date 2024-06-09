@@ -3,8 +3,13 @@ package org.acme.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.acme.domain.Doctor;
-import org.acme.mappers.DoctorMapper;
+import org.acme.domain.DoctorRequestDTO;
+import org.acme.domain.DoctorResponseDTO;
+import org.acme.mappers.DoctorRequestMapper;
+import org.acme.mappers.DoctorResponseMapper;
+import org.acme.models.entities.BranchEntity;
+import org.acme.models.entities.DoctorEntity;
+import org.acme.repositories.BranchRepository;
 import org.acme.repositories.DoctorRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,34 +24,48 @@ public class DoctorService {
     DoctorRepository repository;
 
     @Inject
-    DoctorMapper mapper;
+    BranchRepository branchRepository;
+
+    @Inject
+    DoctorRequestMapper requestMapper;
+
+    @Inject
+    DoctorResponseMapper responseMapper;
 
     @Inject
     EntityManager entityManager;
 
-    public List<Doctor> getAll(){
-        return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    public List<DoctorResponseDTO> getAll(){
+        return repository.listAll().stream().map(responseMapper::toDomain).collect(Collectors.toList());
     }
 
-    public Doctor getById(Long id) {
-        return mapper.toDomain(repository.findById(id));
+    public DoctorResponseDTO getById(Long id) {
+        return responseMapper.toDomain(repository.findById(id));
     }
 
     @Transactional
-    public Doctor create(Doctor doctor) {
-        var entity = mapper.toEntity(doctor);
+    public DoctorEntity create(DoctorRequestDTO doctor) {
+        BranchEntity branch = branchRepository.findById(doctor.getBranch_id());
+        DoctorEntity entity = new DoctorEntity();
+
+        entity.setFirstName(doctor.getFirstName());
+        entity.setLastName(doctor.getLastName());
+        entity.setDni(doctor.getDni());
+        entity.setSpeciality(doctor.getSpeciality());
+        entity.setBranch(branch);
         repository.persist(entity);
-        return mapper.toDomain(entity);
+
+        return entity;  //Seria util no devolver la entidad entera
     }
 
     @Transactional
-    public Doctor update(Long id, Doctor doctor) {
+    public DoctorEntity update(Long id, DoctorRequestDTO doctor) {
         var existingEntity = repository.findById(id);
         if (existingEntity != null) {
-            var updatedEntity = mapper.toEntity(doctor);
+            var updatedEntity = requestMapper.toEntity(doctor);     //TODO!!! DOCTOR UPDATE Y TODOS LOS DEMAS METODOS: MAÑANA VALIDACIONES PARA CREAR TURNOS
             updatedEntity.setId(id);
             updatedEntity = entityManager.merge(updatedEntity);
-            return mapper.toDomain(updatedEntity);
+            return updatedEntity;
         }
         return null;
     }

@@ -61,6 +61,7 @@ public class DoctorEntity {
     private Set<ScheduleEntity> schedules = new HashSet<>();
 
     @ManyToOne
+    @JoinColumn(name = "branch_id")
     private BranchEntity branch;
     
     @OneToMany(mappedBy = "doctor")
