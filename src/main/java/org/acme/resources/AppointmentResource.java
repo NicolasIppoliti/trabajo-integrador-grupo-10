@@ -46,6 +46,7 @@ public class AppointmentResource {
                            .entity(new ResponseMessage("Turno creado exitosamente"))
                            .build();
         } catch (Exception e) {
+        	e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity(new ResponseMessage("Error al crear el turno: " + e.getMessage()))
                            .build();
@@ -55,17 +56,11 @@ public class AppointmentResource {
     @PUT
     @Path("{id}")
     public Response update(@PathParam("id") Long id, AppointmentDTO appointmentDTO) {
-        AppointmentDTO existing = AppointmentMapper.INSTANCE.toDTO(appointmentService.findById(id));
-        if (existing == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                           .entity(new ResponseMessage("Turno no encontrado"))
-                           .build();
-        }
         try {
-            appointmentService.update(AppointmentMapper.INSTANCE.toEntity(appointmentDTO));
-            return Response.ok(new ResponseMessage("Turno actualizado exitosamente"))
-                           .build();
+            appointmentService.update(id, appointmentDTO);
+            return Response.ok(new ResponseMessage("Turno actualizado exitosamente")).build();
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity(new ResponseMessage("Error al actualizar el turno: " + e.getMessage()))
                            .build();
@@ -75,16 +70,12 @@ public class AppointmentResource {
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
-        AppointmentDTO existing = AppointmentMapper.INSTANCE.toDTO(appointmentService.findById(id));
-        if (existing == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                           .entity(new ResponseMessage("Turno no encontrado"))
-                           .build();
-        }
         try {
+            System.out.println("Request to delete appointment with ID: " + id);
             appointmentService.delete(id);
             return Response.noContent().build();
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity(new ResponseMessage("Error al eliminar el turno: " + e.getMessage()))
                            .build();
