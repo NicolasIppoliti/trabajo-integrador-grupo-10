@@ -22,17 +22,17 @@ public class AppointmentEntity {
 
     @ManyToOne
     @NotNull(message = "Paciente no puede ser vacio.")
-    @JsonBackReference(value = "patient-appointments")
+    //@JsonBackReference(value = "patient-appointments")
     private PatientEntity patient;
 
     @NotNull(message = "Día y fecha no puede ser vacios.")
-    @JsonProperty("date_hour")
+    //@JsonProperty("date_hour")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateHour;
 
     @ManyToOne
     @NotNull(message = "Especialista no puede ser vacio.")
-    @JsonBackReference(value = "doctor-appointments")
+    //@JsonBackReference(value = "doctor-appointments")
     private DoctorEntity doctor;
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")

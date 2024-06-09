@@ -41,32 +41,32 @@ public class AppointmentService {
     @Inject
     EntityManager entityManager;
 
-    public List<Appointment> getAll() {
-        return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
-    }
+    // public List<Appointment> getAll() {
+    //     return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    // }
 
-    public Appointment getById(Long id) {
-        return mapper.toDomain(repository.findById(id));
-    }
+    // public Appointment getById(Long id) {
+    //     return mapper.toDomain(repository.findById(id));
+    // }
 
-    @Transactional
-    public Appointment create(Appointment appointment) {
-        var entity = mapper.toEntity(appointment);
-        repository.persist(entity);
-        return mapper.toDomain(entity);
-    }
+    // @Transactional
+    // public Appointment create(Appointment appointment) {
+    //     var entity = mapper.toEntity(appointment);
+    //     repository.persist(entity);
+    //     return mapper.toDomain(entity);
+    // }
 
-    @Transactional
-    public Appointment update(Long id, Appointment appointment) {
-        var existingEntity = repository.findById(id);
-        if (existingEntity != null) {
-            var updatedEntity = mapper.toEntity(appointment);
-            updatedEntity.setId(id);
-            updatedEntity = entityManager.merge(updatedEntity);
-            return mapper.toDomain(updatedEntity);
-        }
-        return null;
-    }
+    // @Transactional
+    // public Appointment update(Long id, Appointment appointment) {
+    //     var existingEntity = repository.findById(id);
+    //     if (existingEntity != null) {
+    //         var updatedEntity = mapper.toEntity(appointment);
+    //         updatedEntity.setId(id);
+    //         updatedEntity = entityManager.merge(updatedEntity);
+    //         return mapper.toDomain(updatedEntity);
+    //     }
+    //     return null;
+    // }
 
     
     @Transactional
@@ -101,6 +101,7 @@ public AppointmentEntity create2(Appointment appointment){
 
     if (isAValidDate(date)){
         if (doctorWorksThatDay(appointment.getDoctor_id(), date) && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
+            System.out.println("Parece que el doctor trabaja ese dia a esa hora");
             if (!scheduleHaveAppointments(appointment.getDoctor_id(), dateTime)) {
                 System.out.println("Parece que paso la validacion.Estoy a un paso de persistirlo...");
                 repository.persist(entity);
@@ -115,6 +116,7 @@ public AppointmentEntity create2(Appointment appointment){
 }
 
 public boolean isAValidDate(LocalDate date) {
+    System.out.println("Ejecuto ValidarDia");
     LocalDate today = LocalDate.now();
     LocalDate futureDate = today.plusDays(60);
     LocalDate earliestValidDate = today.plusDays(1); // Los turnos solo pueden pedirse para el día siguiente en adelante
@@ -122,6 +124,7 @@ public boolean isAValidDate(LocalDate date) {
 }
 
     public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
+        System.out.println("Ejecuto HorarioTieneCita");
         LocalDateTime startTime = dateTime.minusMinutes(30);
         LocalDateTime endTime = dateTime;
     
@@ -136,15 +139,17 @@ public boolean isAValidDate(LocalDate date) {
     }
 
     public boolean doctorWorksThatDay(Long doctor_id, LocalDate date){
+        System.out.println("Ejecuto doctorTrabaja ese dia");
         DoctorEntity doctor = dRepository.findById(doctor_id);
         if (doctor == null) {
             System.out.println("Doctor no encontrado");
         }
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         Set<ScheduleEntity> schedules = doctor.getSchedules();
-
         for (ScheduleEntity schedule : schedules) {
-            if (schedule.getDay().equals(dayOfWeek)) {
+            System.out.println(schedule.getDay());
+            System.out.println(dayOfWeek);
+            if (schedule.getDay().toString().equals(dayOfWeek.toString())) {
                 return true;
             }
         }
@@ -153,11 +158,12 @@ public boolean isAValidDate(LocalDate date) {
 
 
     public boolean doctorWorksThatDayAndTime(Long doctor_id, LocalDate date, LocalTime time) {
+        System.out.println("Ejecuto doctor trabaja ese dia y hora");
         if (doctorWorksThatDay(doctor_id, date)) {
             DoctorEntity doctor = dRepository.findById(doctor_id);
             Set<ScheduleEntity> schedules = doctor.getSchedules();
             for (ScheduleEntity schedule : schedules) {
-                if (schedule.getDay().equals(date.getDayOfWeek())) {
+                if (schedule.getDay().toString().equals(date.getDayOfWeek().toString())) {
                     LocalTime entryTime = schedule.getEntryTime();
                     LocalTime departureTime = schedule.getDepartureTime();
                     if (time.isAfter(entryTime) && time.isBefore(departureTime)) {

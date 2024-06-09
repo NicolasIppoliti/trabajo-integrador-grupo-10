@@ -17,11 +17,13 @@ public class AppointmentRepository implements PanacheRepositoryBase<AppointmentE
     @Inject
     EntityManager em;
 
-    public List<AppointmentEntity> findAppointmentsByDoctorAndDate(Long doctorId, LocalDate date) { //TODO! MIRAR SI doctorId no da problemas
-        return em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.dateHour.toLocalDate() = :date", AppointmentEntity.class)
+    public List<AppointmentEntity> findAppointmentsByDoctorAndDate(Long doctorId, LocalDate date) {
+        return em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.dateHour >= :startDate AND a.dateHour < :endDate", AppointmentEntity.class)
                  .setParameter("doctorId", doctorId)
-                 .setParameter("date", date)
+                 .setParameter("startDate", date.atStartOfDay())
+                 .setParameter("endDate", date.plusDays(1).atStartOfDay())
                  .getResultList();
     }
+    
 	
 }

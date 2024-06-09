@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,9 +41,9 @@ public class PatientEntity {
     private String phone;
 
     @JsonProperty("appointments")
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "patient", fetch = FetchType.EAGER)
     @JsonManagedReference(value = "patient-appointments")
-    private List<AppointmentEntity> appointments;
+    private List<AppointmentEntity> appointments = new ArrayList<>();
     
     public void setId(Long id) {
         this.id = id;

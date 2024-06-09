@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.acme.utils.Speciality;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -54,6 +55,7 @@ public class DoctorEntity {
     @Enumerated(EnumType.STRING)
     private Speciality speciality;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "doctor_schedule",
@@ -67,6 +69,7 @@ public class DoctorEntity {
     @JoinColumn(name = "branch_id")
     private BranchEntity branch;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "doctor")
     @JsonManagedReference(value = "doctor-appointments")
     private Set<AppointmentEntity> appointments = new HashSet<>();
