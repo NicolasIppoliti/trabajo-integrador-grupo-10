@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -41,7 +44,7 @@ public class PatientEntity {
     @JsonProperty("appointments")
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "patient-appointments")
-    private List<AppointmentEntity> appointments;
+    private Set<AppointmentEntity> appointments = new HashSet<>();
     
     public void setId(Long id) {
         this.id = id;

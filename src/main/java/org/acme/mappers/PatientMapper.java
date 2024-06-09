@@ -1,11 +1,18 @@
 package org.acme.mappers;
 
-import org.acme.domain.Patient;
 import org.acme.models.entities.PatientEntity;
+import org.acme.models.dto.PatientDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "cdi", uses = { AppointmentMapper.class })
+@Mapper(uses = {AppointmentMapper.class})
 public interface PatientMapper {
-	Patient toDomain(PatientEntity entity);
-	PatientEntity toEntity(Patient domain);
+    PatientMapper INSTANCE = Mappers.getMapper(PatientMapper.class);
+
+    @Mapping(source = "appointments", target = "appointments")
+    PatientDTO toDTO(PatientEntity entity);
+
+    @Mapping(source = "appointments", target = "appointments")
+    PatientEntity toEntity(PatientDTO dto);
 }

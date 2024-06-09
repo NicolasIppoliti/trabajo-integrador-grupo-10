@@ -8,20 +8,9 @@ import org.acme.utils.Speciality;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.smallrye.common.constraint.NotNull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,19 +40,9 @@ public class DoctorEntity {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Speciality speciality;
-
-    @ManyToMany
-    @JoinTable(
-        name = "doctor_schedule",
-        joinColumns = @JoinColumn(name = "doctor_id"),
-        inverseJoinColumns = @JoinColumn(name = "schedule_id")
-    )
-    private Set<ScheduleEntity> schedules = new HashSet<>();
-
-    @ManyToOne
-    private BranchEntity branch;
     
-    @OneToMany(mappedBy = "doctor")
+    @JsonProperty("appointments")
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "doctor-appointments")
     private Set<AppointmentEntity> appointments = new HashSet<>();
     

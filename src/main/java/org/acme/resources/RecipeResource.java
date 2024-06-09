@@ -1,12 +1,14 @@
 package org.acme.resources;
 
-import org.acme.domain.Recipe;
 import org.acme.services.RecipeService;
+import org.acme.models.dto.RecipeDTO;
+import org.acme.mappers.RecipeMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/recetas")
 @Produces(MediaType.APPLICATION_JSON)
@@ -14,67 +16,74 @@ import java.util.List;
 public class RecipeResource {
 
     @Inject
-    RecipeService service;
+    RecipeService recipeService;
 
     @GET
-    public Response getAll() {
-        try {
-            List<Recipe> recipes = service.getAll();
-            return Response.ok(recipes).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener las recetas").build();
-        }
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response getById(@PathParam("id") Long id) {
-        try {
-            Recipe recipe = service.getById(id);
-            if (recipe == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Receta no encontrada").build();
-            }
-            return Response.ok(recipe).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener la receta").build();
-        }
+    public List<RecipeDTO> listAll() {
+        return recipeService.listAll().stream()
+            .map(RecipeMapper.INSTANCE::toDTO)
+            .collect(Collectors.toList());
     }
 
     @POST
-    public Response create(Recipe recipe) {
+    public Response add(RecipeDTO recipeDTO) {
         try {
-            Recipe createdRecipe = service.create(recipe);
-            return Response.status(Response.Status.CREATED).entity(createdRecipe).build();
+            recipeService.add(RecipeMapper.INSTANCE.toEntity(recipeDTO));
+            return Response.status(Response.Status.CREATED).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear la receta: " + e.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Error al crear la receta: " + e.getMessage())
+                           .build();
         }
     }
 
     @PUT
-    @Path("/{id}")
-    public Response update(@PathParam("id") Long id, Recipe recipe) {
+    @Path("{id}")
+    public Response update(@PathParam("id") Long id, RecipeDTO recipeDTO) {
+        RecipeDTO existing = RecipeMapper.INSTANCE.toDTO(recipeService.findById(id));
+        if (existing == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Receta no encontrada")
+                           .build();
+        }
         try {
-            Recipe updatedRecipe = service.update(id, recipe);
-            if (updatedRecipe == null) {
-                return Response.status(Response.Status.NOT_FOUND).entity("Receta no encontrada").build();
-            }
-            return Response.ok(updatedRecipe).build();
+            recipeService.update(RecipeMapper.INSTANCE.toEntity(recipeDTO));
+            return Response.ok().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar la receta").build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Error al actualizar la receta: " + e.getMessage())
+                           .build();
         }
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
-        try {
-            if (service.delete(id)) {
-                return Response.status(Response.Status.NO_CONTENT).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Receta no encontrada").build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar la receta").build();
+        RecipeDTO existing = RecipeMapper.INSTANCE.toDTO(recipeService.findById(id));
+        if (existing == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Receta no encontrada")
+                           .build();
         }
+        try {
+            recipeService.delete(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Error al eliminar la receta: " + e.getMessage())
+                           .build();
+        }
+    }
+
+    @GET
+    @Path("{id}")
+    public Response findById(@PathParam("id") Long id) {
+        RecipeDTO recipe = RecipeMapper.INSTANCE.toDTO(recipeService.findById(id));
+        if (recipe == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                           .entity("Receta no encontrada")
+                           .build();
+        }
+        return Response.ok(recipe).build();
     }
 }
