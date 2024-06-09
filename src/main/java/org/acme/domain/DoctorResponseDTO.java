@@ -1,10 +1,9 @@
 package org.acme.domain;
 
+import lombok.Data;
 import java.util.Set;
 
 import org.acme.utils.Speciality;
-
-import lombok.Data;
 
 @Data
 public class DoctorResponseDTO {

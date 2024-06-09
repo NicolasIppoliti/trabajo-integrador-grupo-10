@@ -1,6 +1,7 @@
 package org.acme.resources;
 
 import org.acme.domain.Appointment;
+import org.acme.models.entities.AppointmentEntity;
 import org.acme.services.AppointmentService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -44,7 +45,9 @@ public class AppointmentResource {
     @POST
     public Response create(Appointment appointment) {
         try {
-            Appointment created = service.create(appointment);
+            System.out.println("Estoy por ejecutar el service");
+            AppointmentEntity created = service.create2(appointment);
+            System.out.println("Ya ejecute el metodo y voy a devolver el resultado al endpoint");
             return Response.status(Response.Status.CREATED).entity(created).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al crear el turno").build();
@@ -80,4 +83,6 @@ public class AppointmentResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el turno").build();
         }
     }
+
+    
 }
