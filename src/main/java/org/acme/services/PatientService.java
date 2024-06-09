@@ -1,7 +1,8 @@
 package org.acme.services;
 
-import org.acme.repositories.PatientRepository;
 import org.acme.models.entities.PatientEntity;
+import org.acme.repositories.PatientRepository;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,22 +18,24 @@ public class PatientService {
         return patientRepository.listAll();
     }
 
-    @Transactional
-    public void add(PatientEntity patient) {
-        patientRepository.persist(patient);
-    }
-
-    @Transactional
-    public void update(PatientEntity patient) {
-        patientRepository.getEntityManager().merge(patient);
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        patientRepository.deleteById(id);
-    }
-
     public PatientEntity findById(Long id) {
         return patientRepository.findById(id);
     }
+
+    @Transactional
+    public void add(PatientEntity patientEntity) {
+        patientRepository.persist(patientEntity);
+    }
+
+//	  No es necesario para la entrega
+    
+//    @Transactional
+//    public void update(PatientEntity patientEntity) {
+//        patientRepository.getEntityManager().merge(patientEntity);
+//    }
+//
+//    @Transactional
+//    public void delete(Long id) {
+//        patientRepository.deleteById(id);
+//    }
 }

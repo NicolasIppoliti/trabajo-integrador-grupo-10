@@ -1,7 +1,7 @@
 package org.acme.mappers;
 
-import org.acme.models.entities.AppointmentEntity;
 import org.acme.models.dto.AppointmentDTO;
+import org.acme.models.entities.AppointmentEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -10,11 +10,11 @@ import org.mapstruct.factory.Mappers;
 public interface AppointmentMapper {
     AppointmentMapper INSTANCE = Mappers.getMapper(AppointmentMapper.class);
 
-    @Mapping(source = "doctor.id", target = "doctorId")
-    @Mapping(source = "patient.id", target = "patientId")
+    @Mapping(target = "doctorId", source = "doctor.id")
+    @Mapping(target = "patientId", source = "patient.id")
     AppointmentDTO toDTO(AppointmentEntity entity);
 
-    @Mapping(source = "doctorId", target = "doctor.id")
-    @Mapping(source = "patientId", target = "patient.id")
+    @Mapping(target = "doctor", ignore = true)
+    @Mapping(target = "patient", ignore = true)
     AppointmentEntity toEntity(AppointmentDTO dto);
 }

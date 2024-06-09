@@ -1,22 +1,22 @@
 package org.acme.models.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
+import org.acme.utils.Branch;
+import org.acme.utils.Hours;
 import org.acme.utils.Speciality;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "doctors")
@@ -41,10 +41,16 @@ public class DoctorEntity {
     @Enumerated(EnumType.STRING)
     private Speciality speciality;
     
-    @JsonProperty("appointments")
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Enumerated(EnumType.STRING)
+    private Branch branch;
+
+    @Enumerated(EnumType.STRING)
+    private Hours workingHours;
+    
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference(value = "doctor-appointments")
-    private Set<AppointmentEntity> appointments = new HashSet<>();
+    @JsonIgnore
+    private List<AppointmentEntity> appointments;
     
     public void setId(Long id) {
         this.id = id;

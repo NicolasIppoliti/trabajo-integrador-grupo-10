@@ -5,11 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @NoArgsConstructor
@@ -41,10 +40,10 @@ public class PatientEntity {
     @Column(name = "phone", unique = true)
     private String phone;
 
-    @JsonProperty("appointments")
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference(value = "patient-appointments")
-    private Set<AppointmentEntity> appointments = new HashSet<>();
+    @JsonIgnore
+    private List<AppointmentEntity> appointments;
     
     public void setId(Long id) {
         this.id = id;

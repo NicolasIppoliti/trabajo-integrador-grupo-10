@@ -1,10 +1,11 @@
 package org.acme.repositories;
 
 import org.acme.models.entities.RecipeEntity;
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class RecipeRepository implements PanacheRepositoryBase<RecipeEntity, Long>{
+public class RecipeRepository implements PanacheRepository<RecipeEntity>{
 	
 }

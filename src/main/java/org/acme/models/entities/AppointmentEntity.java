@@ -23,6 +23,7 @@ public class AppointmentEntity {
     @ManyToOne
     @NotNull(message = "Paciente no puede ser vacio.")
     @JsonBackReference(value = "patient-appointments")
+    @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
     @NotNull(message = "Día y fecha no puede ser vacios.")
@@ -33,6 +34,7 @@ public class AppointmentEntity {
     @ManyToOne
     @NotNull(message = "Especialista no puede ser vacio.")
     @JsonBackReference(value = "doctor-appointments")
+    @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")

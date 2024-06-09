@@ -1,18 +1,28 @@
 package org.acme.mappers;
 
 import org.acme.models.entities.DoctorEntity;
+import org.acme.models.entities.AppointmentEntity;
 import org.acme.models.dto.DoctorDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {AppointmentMapper.class})
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Mapper
 public interface DoctorMapper {
     DoctorMapper INSTANCE = Mappers.getMapper(DoctorMapper.class);
 
-    @Mapping(source = "appointments", target = "appointments")
+    @Mapping(target = "appointmentIds", source = "appointments")
     DoctorDTO toDTO(DoctorEntity entity);
 
-    @Mapping(source = "appointments", target = "appointments")
+    @Mapping(target = "appointments", ignore = true)
     DoctorEntity toEntity(DoctorDTO dto);
+
+    default List<Long> mapAppointments(List<AppointmentEntity> appointments) {
+        return appointments.stream()
+                .map(AppointmentEntity::getId)
+                .collect(Collectors.toList());
+    }
 }
