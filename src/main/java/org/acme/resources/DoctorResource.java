@@ -21,18 +21,27 @@ public class DoctorResource {
     DoctorService service;
 
     @GET
-    public List<DoctorResponseDTO> getAll() {
-        return service.getAll();
+    public Response getAll() {
+        try {
+            List<Doctor> doctors = service.getAll();
+            return Response.ok(doctors).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los especialistas").build();
+        }
     }
 
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        DoctorResponseDTO doctor = service.getById(id);
-        if (doctor == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Doctor doctor = service.getById(id);
+            if (doctor == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
+            }
+            return Response.ok(doctor).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el especialista").build();
         }
-        return Response.ok(doctor).build();
     }
 
     @POST
@@ -41,26 +50,35 @@ public class DoctorResource {
             DoctorEntity createdDoctor = service.create(doctor);
             return Response.status(Response.Status.CREATED).entity(createdDoctor).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }    
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el especialista: " + e.getMessage()).build();
+        }
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {
-        DoctorEntity updatedDoctor = service.update(id, doctor);
-        if (updatedDoctor == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            DoctorEntity updatedDoctor = service.update(id, doctor);
+            if (updatedDoctor == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
+            }
+            return Response.ok(updatedDoctor).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el especialista").build();
         }
-        return Response.ok(updatedDoctor).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        if (service.delete(id)) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+        try {
+            if (service.delete(id)) {
+                return Response.status(Response.Status.NO_CONTENT).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el especialista").build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class RecipeService {
         if (existingEntity != null) {
             var updatedEntity = mapper.toEntity(recipe);
             updatedEntity.setId(id);
-            repository.persist(updatedEntity);
+            updatedEntity = entityManager.merge(updatedEntity); // Use entityManager to merge
             return mapper.toDomain(updatedEntity);
         }
         return null;
@@ -54,7 +53,7 @@ public class RecipeService {
     public boolean delete(Long id) {
         var existingEntity = repository.findById(id);
         if (existingEntity != null) {
-        	repository.delete(existingEntity);
+            repository.delete(existingEntity);
             return true;
         }
         return false;
