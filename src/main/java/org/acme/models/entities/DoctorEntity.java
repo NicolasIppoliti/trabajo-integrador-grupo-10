@@ -12,6 +12,7 @@ import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,7 +53,7 @@ public class DoctorEntity {
     @Enumerated(EnumType.STRING)
     private Speciality speciality;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "doctor_schedule",
         joinColumns = @JoinColumn(name = "doctor_id"),
@@ -60,7 +61,7 @@ public class DoctorEntity {
     )
     private Set<ScheduleEntity> schedules = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private BranchEntity branch;
     

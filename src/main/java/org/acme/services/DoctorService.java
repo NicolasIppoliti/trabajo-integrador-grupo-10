@@ -60,11 +60,19 @@ public class DoctorService {
 
     @Transactional
     public DoctorEntity update(Long id, DoctorRequestDTO doctor) {
-        var existingEntity = repository.findById(id);
+        BranchEntity branch = branchRepository.findById(doctor.getBranch_id());
+        DoctorEntity existingEntity = repository.findById(id);
         if (existingEntity != null) {
             var updatedEntity = requestMapper.toEntity(doctor);     //TODO!!! DOCTOR UPDATE Y TODOS LOS DEMAS METODOS: MAÑANA VALIDACIONES PARA CREAR TURNOS
             updatedEntity.setId(id);
-            updatedEntity = entityManager.merge(updatedEntity);
+            updatedEntity.setFirstName(doctor.getFirstName());
+            updatedEntity.setLastName(doctor.getLastName());
+            updatedEntity.setDni(doctor.getDni());
+            updatedEntity.setSpeciality(doctor.getSpeciality());
+            updatedEntity.setBranch(branch);
+            System.out.println("Casi persisto...");
+            entityManager.merge(updatedEntity);
+            System.out.println("PErsistido???");
             return updatedEntity;
         }
         return null;

@@ -21,9 +21,9 @@ public class DoctorResource {
     DoctorService service;
 
     @GET
-    public Response getAll() {
+    public Response getAll() {      //LISTO OK!
         try {
-            List<Doctor> doctors = service.getAll();
+            List<DoctorResponseDTO> doctors = service.getAll();
             return Response.ok(doctors).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los especialistas").build();
@@ -32,9 +32,9 @@ public class DoctorResource {
 
     @GET
     @Path("/{id}")
-    public Response getById(@PathParam("id") Long id) {
+    public Response getById(@PathParam("id") Long id) {         //LISTO OK!
         try {
-            Doctor doctor = service.getById(id);
+            DoctorResponseDTO doctor = service.getById(id);
             if (doctor == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
             }
@@ -45,7 +45,7 @@ public class DoctorResource {
     }
 
     @POST
-    public Response create(DoctorRequestDTO doctor) {
+    public Response create(DoctorRequestDTO doctor) {       //LISTO OK!!
         try {
             DoctorEntity createdDoctor = service.create(doctor);
             return Response.status(Response.Status.CREATED).entity(createdDoctor).build();
@@ -56,13 +56,14 @@ public class DoctorResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {
+    public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {         //LISTO OK, en realidad no persistio!!
+        System.out.println("llame al update hasta el service....*********************************************************************");
         try {
             DoctorEntity updatedDoctor = service.update(id, doctor);
             if (updatedDoctor == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
             }
-            return Response.ok(updatedDoctor).build();
+            return Response.ok(updatedDoctor).entity(updatedDoctor).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el especialista").build();
         }
