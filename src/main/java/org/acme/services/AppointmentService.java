@@ -49,39 +49,8 @@ public class AppointmentService {
         return mapper.toDomain(repository.findById(id));
     }
 
-    // @Transactional
-    // public Appointment create(Appointment appointment) {
-    //     var entity = mapper.toEntity(appointment);
-    //     repository.persist(entity);
-    //     return mapper.toDomain(entity);
-    // }
-
-    // @Transactional
-    // public Appointment update(Long id, Appointment appointment) {
-    //     var existingEntity = repository.findById(id);
-    //     if (existingEntity != null) {
-    //         var updatedEntity = mapper.toEntity(appointment);
-    //         updatedEntity.setId(id);
-    //         updatedEntity = entityManager.merge(updatedEntity);
-    //         return mapper.toDomain(updatedEntity);
-    //     }
-    //     return null;
-    // }
-
-    
     @Transactional
-    public boolean delete(Long id) {
-        var existingEntity = repository.findById(id);
-        if (existingEntity != null) {
-            repository.delete(existingEntity);
-            return true;
-        }
-        return false;
-    }
-
-    //----------------------------LOGICA PARA CREAR EN HORARIO VALIDADO-------------------------------
-@Transactional
-public AppointmentEntity create2(Appointment appointment){
+    public AppointmentEntity create(Appointment appointment){
     DoctorEntity doctor = dRepository.findById(appointment.getDoctor_id());
     PatientEntity patient = pRepository.findById(appointment.getPatient_id());
 
@@ -115,6 +84,50 @@ public AppointmentEntity create2(Appointment appointment){
     throw new IllegalArgumentException("The date and time are not valid.");
 }
 
+    @Transactional
+    public AppointmentEntity update(Long id, Appointment appointment) {
+        var existingEntity = repository.findById(id);
+        if (existingEntity != null) {
+            LocalDate date = appointment.getDateHour().toLocalDate();
+            LocalTime time = appointment.getDateHour().toLocalTime();
+
+
+            if (isAValidDate(date)){
+                if (doctorWorksThatDay(appointment.getDoctor_id(), date) && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
+                    System.out.println("Parece que el doctor trabaja ese dia a esa hora");
+                    if (!scheduleHaveAppointments(appointment.getDoctor_id(), appointment.getDateHour())) {
+                        System.out.println("Parece que paso la validacion.Estoy a un paso de persistirlo...");
+                        var updatedEntity = existingEntity;
+                        updatedEntity.setDoctor(dRepository.findById(appointment.getDoctor_id()));
+                        updatedEntity.setDateHour(appointment.getDateHour());
+                        updatedEntity.setQueryReason(appointment.getQueryReason());
+                        updatedEntity = entityManager.merge(updatedEntity); //TODO! CAMBIE EL PERSIST POR MERGE
+                        return updatedEntity;
+                    } else {
+                        throw new IllegalArgumentException("The doctor already has an appointment at the specified time or within the 30 minutes before.");
+                    }
+                }
+            }
+        
+            throw new IllegalArgumentException("The date and time are not valid.");
+        }
+        return null;
+    }
+
+    
+    @Transactional
+    public boolean delete(Long id) {
+        var existingEntity = repository.findById(id);
+        if (existingEntity != null) {
+            repository.delete(existingEntity);
+            return true;
+        }
+        return false;
+    }
+
+    //----------------------------LOGICA PARA CREAR EN HORARIO VALIDADO-------------------------------
+
+
 public boolean isAValidDate(LocalDate date) {
     System.out.println("Ejecuto ValidarDia");
     LocalDate today = LocalDate.now();
@@ -126,12 +139,14 @@ public boolean isAValidDate(LocalDate date) {
     public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
         System.out.println("Ejecuto HorarioTieneCita");
         LocalDateTime startTime = dateTime.minusMinutes(30);
+        System.out.println(startTime);
         LocalDateTime endTime = dateTime;
     
         List<AppointmentEntity> appointments = repository.findAppointmentsByDoctorAndDate(doctorId, dateTime.toLocalDate());
         for (AppointmentEntity appointment : appointments) {
             LocalDateTime appointmentTime = appointment.getDateHour();
             if (!appointmentTime.isBefore(startTime) && !appointmentTime.isAfter(endTime)) {
+                System.out.println("Tiene cita, su cita es:" + appointmentTime);
                 return true;
             }
         }
