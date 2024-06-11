@@ -96,11 +96,6 @@
         <version>${org.mapstruct.version}</version>
         <scope>provided</scope>
     </dependency>
-    <dependency>
-    <groupId>org.mapstruct</groupId>
-    <artifactId>mapstruct-processor</artifactId>
-    <version>1.5.5.Final</version>
-</dependency>
   </dependencies>
   <build>
     <plugins>

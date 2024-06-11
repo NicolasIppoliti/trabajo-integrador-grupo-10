@@ -7,8 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class PatientRepository implements PanacheRepositoryBase<PatientEntity, Long>{
 
-	public PatientEntity findByEmail(String email){
+    public PatientEntity findByEmail(String email) {
         return find("email", email).firstResult();
-
     }
 }
