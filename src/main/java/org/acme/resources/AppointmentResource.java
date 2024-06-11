@@ -17,44 +17,42 @@ public class AppointmentResource {
     @Inject
     AppointmentService service;
 
-    // @GET
-    // public Response getAll() {
-    //     try {
-    //         List<Appointment> appointments = service.getAll();
-    //         return Response.ok(appointments).build();
-    //     } catch (Exception e) {
-    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los turnos").build();
-    //     }
-    // }
+    @GET
+    public Response getAll() {
+        try {
+            List<Appointment> appointments = service.getAll();
+            return Response.ok(appointments).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los turnos").build();
+        }
+    }
 
-    // @GET
-    // @Path("/{id}")
-    // public Response getById(@PathParam("id") Long id) {
-    //     try {
-    //         Appointment appointment = service.getById(id);
-    //         if (appointment != null) {
-    //             return Response.ok(appointment).build();
-    //         } else {
-    //             return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
-    //         }
-    //     } catch (Exception e) {
-    //         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el turno").build();
-    //     }
-    // }
+    @GET
+    @Path("/{id}")
+    public Response getById(@PathParam("id") Long id) {
+        try {
+            Appointment appointment = service.getById(id);
+            if (appointment != null) {
+                return Response.ok(appointment).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el turno").build();
+        }
+    }
 
     @POST
     public Response create(Appointment appointment) {
         try {
-            System.out.println("Estoy por ejecutar el service");
             AppointmentEntity created = service.create2(appointment);
-            System.out.println("Ya ejecute el metodo y voy a devolver el resultado al endpoint");
-            return Response.status(Response.Status.CREATED).entity(created).build();
+            return Response.status(Response.Status.CREATED).entity(created).build();    //TODO! Ya creo y persistio el turno, pero a veces no devuelve el build al endpoint.
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al crear el turno").build();
         }
     }
 
-    // @PUT
+    // @PUT     //TODO! Corregir!
     // @Path("/{id}")
     // public Response update(@PathParam("id") Long id, Appointment appointment) {
     //     try {

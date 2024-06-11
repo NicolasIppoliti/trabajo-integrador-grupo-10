@@ -41,13 +41,13 @@ public class AppointmentService {
     @Inject
     EntityManager entityManager;
 
-    // public List<Appointment> getAll() {
-    //     return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
-    // }
+    public List<Appointment> getAll() {
+        return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
 
-    // public Appointment getById(Long id) {
-    //     return mapper.toDomain(repository.findById(id));
-    // }
+    public Appointment getById(Long id) {
+        return mapper.toDomain(repository.findById(id));
+    }
 
     // @Transactional
     // public Appointment create(Appointment appointment) {

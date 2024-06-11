@@ -56,7 +56,7 @@ public class DoctorResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {         //LISTO OK, en realidad no persistio!!
+    public Response update(@PathParam("id") Long id, DoctorRequestDTO doctor) {         //LISTO OK!
         System.out.println("llame al update hasta el service....*********************************************************************");
         try {
             DoctorEntity updatedDoctor = service.update(id, doctor);
@@ -71,7 +71,7 @@ public class DoctorResource {
 
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") Long id) {
+    public Response delete(@PathParam("id") Long id) {          //LISTO OK!
         try {
             if (service.delete(id)) {
                 return Response.status(Response.Status.NO_CONTENT).build();
