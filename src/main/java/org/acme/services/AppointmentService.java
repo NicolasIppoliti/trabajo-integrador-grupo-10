@@ -101,7 +101,7 @@ public class AppointmentService {
                         updatedEntity.setDoctor(dRepository.findById(appointment.getDoctor_id()));
                         updatedEntity.setDateHour(appointment.getDateHour());
                         updatedEntity.setQueryReason(appointment.getQueryReason());
-                        updatedEntity = entityManager.merge(updatedEntity); //TODO! CAMBIE EL PERSIST POR MERGE
+                        updatedEntity = entityManager.merge(updatedEntity);
                         return updatedEntity;
                     } else {
                         throw new IllegalArgumentException("The doctor already has an appointment at the specified time or within the 30 minutes before.");
