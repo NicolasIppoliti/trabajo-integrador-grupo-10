@@ -6,11 +6,14 @@ import org.acme.models.entities.DoctorEntity;
 import org.acme.services.DoctorService;
 
 import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/especialistas")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,12 +48,19 @@ public class DoctorResource {
     }
 
     @POST
-    public Response create(DoctorRequestDTO doctor) {       //LISTO OK!!
+    public Response create(@Valid DoctorRequestDTO doctor) {       //LISTO OK!!
         try {
             DoctorEntity createdDoctor = service.create(doctor);
+
+            if (createdDoctor.getBranch() == null) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("La sucursal especificada no existe").build();
+            }
             return Response.status(Response.Status.CREATED).entity(createdDoctor).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el especialista: " + e.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            String violations = e.getConstraintViolations().stream()
+                    .map(violation -> violation.getMessage())
+                    .collect(Collectors.joining(", "));
+            return Response.status(Response.Status.BAD_REQUEST).entity(violations).build();
         }
     }
 
@@ -62,6 +72,9 @@ public class DoctorResource {
             DoctorEntity updatedDoctor = service.update(id, doctor);
             if (updatedDoctor == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("Especialista no encontrado").build();
+            }
+            if (updatedDoctor.getBranch() == null) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("La sucursal especificada no existe").build();
             }
             return Response.ok(updatedDoctor).entity(updatedDoctor).build();
         } catch (Exception e) {

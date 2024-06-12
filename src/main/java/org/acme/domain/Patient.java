@@ -11,5 +11,5 @@ public class Patient {
     private String email;
     private String password;
     private String phone;
-    private List<Appointment> appointments;
+   // private List<Appointment> appointments;
 }

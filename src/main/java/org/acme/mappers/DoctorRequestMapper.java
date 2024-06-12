@@ -19,6 +19,7 @@ public interface DoctorRequestMapper {
         @Mapping(source = "branch_id", target = "branch.id"),
         @Mapping(target = "schedules", ignore = true),
         @Mapping(target = "appointments", ignore = true),
+        @Mapping(target = "id", ignore = true)
     })
     DoctorEntity toEntity(DoctorRequestDTO domain);
     }

@@ -1,6 +1,7 @@
 package org.acme.resources;
 
 import org.acme.domain.Appointment;
+import org.acme.mappers.AppointmentMapper;
 import org.acme.models.entities.AppointmentEntity;
 import org.acme.services.AppointmentService;
 import jakarta.inject.Inject;
@@ -16,6 +17,9 @@ public class AppointmentResource {
 
     @Inject
     AppointmentService service;
+
+    @Inject
+    AppointmentMapper mapper;
 
     @GET
     public Response getAll() {
@@ -46,19 +50,23 @@ public class AppointmentResource {
     public Response create(Appointment appointment) {
         try {
             AppointmentEntity created = service.create(appointment);
-            return Response.status(Response.Status.CREATED).entity(created).build();    //TODO! Ya creo y persistio el turno, pero a veces no devuelve el build al endpoint.
+            Appointment resultDTO = mapper.toDomain(created);
+
+
+            return Response.status(Response.Status.CREATED).entity(resultDTO).build();    //TODO! Ya creo y persistio el turno, pero a veces no devuelve el build al endpoint.
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al crear el turno").build();
         }
     }
 
-    @PUT     //TODO! Corregir!
+    @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, Appointment appointment) {
         try {
             AppointmentEntity updated = service.update(id, appointment);
+            Appointment resultDTO = mapper.toDomain(updated);
             if (updated != null) {
-                return Response.ok(updated).build();
+                return Response.ok(resultDTO).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Turno no encontrado").build();
             }

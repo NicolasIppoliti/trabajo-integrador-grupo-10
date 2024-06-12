@@ -65,12 +65,14 @@ public class DoctorEntity {
         )
     private Set<ScheduleEntity> schedules = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "branch_id")
+    @NotNull
     private BranchEntity branch;
     
-    @JsonIgnore
-    @OneToMany(mappedBy = "doctor")
+
+    @JsonProperty("appointments")
+    @OneToMany(mappedBy = "doctor", fetch = FetchType.EAGER)
     @JsonManagedReference(value = "doctor-appointments")
     private Set<AppointmentEntity> appointments = new HashSet<>();
     

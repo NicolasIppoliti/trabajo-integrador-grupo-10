@@ -46,6 +46,7 @@ public class DoctorService {
     @Transactional
     public DoctorEntity create(DoctorRequestDTO doctor) {
         BranchEntity branch = branchRepository.findById(doctor.getBranch_id());
+        
         DoctorEntity entity = new DoctorEntity();
 
         entity.setFirstName(doctor.getFirstName());

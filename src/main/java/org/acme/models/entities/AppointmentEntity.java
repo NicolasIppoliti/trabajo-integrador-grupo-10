@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
@@ -28,7 +32,9 @@ public class AppointmentEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateHour;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    @Fetch(FetchMode.JOIN)
     @NotNull(message = "Especialista no puede ser vacio.")
     //@JsonBackReference(value = "doctor-appointments")
     private DoctorEntity doctor;
