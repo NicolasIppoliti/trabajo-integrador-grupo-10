@@ -6,6 +6,8 @@ import org.acme.repositories.PatientRepository;
 import org.acme.utils.Role;
 
 import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -69,6 +71,11 @@ public class AuthResource {
     patientRepository.persist(newPatient);
 
     String token = service.generatePatientToken(newPatient);
-    return Response.ok(token).build();
+
+    JsonObject jsonResponse = Json.createObjectBuilder()
+                                  .add("token", token)
+                                  .build();
+
+    return Response.ok(jsonResponse).build();
   }
 }
