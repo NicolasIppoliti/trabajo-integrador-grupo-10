@@ -2,6 +2,8 @@ package org.acme.services;
 
 import org.acme.domain.Recipe;
 import org.acme.mappers.RecipeMapper;
+import org.acme.models.entities.AppointmentEntity;
+import org.acme.repositories.AppointmentRepository;
 import org.acme.repositories.RecipeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,6 +23,8 @@ public class RecipeService {
 
     @Inject
     EntityManager entityManager;
+    @Inject
+    AppointmentRepository apRepository;
 
     public List<Recipe> getAll() {
         return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
@@ -32,17 +36,21 @@ public class RecipeService {
 
     @Transactional
     public Recipe create(Recipe recipe) {
+        AppointmentEntity appointment = apRepository.findById(recipe.getAppointment_id());
         var entity = mapper.toEntity(recipe);
+        entity.setAppointment(appointment);
         repository.persist(entity);
         return mapper.toDomain(entity);
     }
 
     @Transactional
     public Recipe update(Long id, Recipe recipe) {
+        AppointmentEntity appointment = apRepository.findById(recipe.getAppointment_id());
         var existingEntity = repository.findById(id);
         if (existingEntity != null) {
             var updatedEntity = mapper.toEntity(recipe);
             updatedEntity.setId(id);
+            updatedEntity.setAppointment(appointment);
             updatedEntity = entityManager.merge(updatedEntity); // Use entityManager to merge
             return mapper.toDomain(updatedEntity);
         }

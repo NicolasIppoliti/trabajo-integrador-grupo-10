@@ -5,8 +5,7 @@ import java.time.LocalDate;
 
 @Data
 public class Recipe {
-    private Long id;
     private String description;
-    private Appointment appointment;
+    private Long appointment_id;
     private LocalDate issueDate;
 }
