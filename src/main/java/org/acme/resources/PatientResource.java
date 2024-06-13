@@ -2,6 +2,9 @@ package org.acme.resources;
 
 import org.acme.domain.Patient;
 import org.acme.services.PatientService;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,6 +18,9 @@ public class PatientResource {
 
     @Inject
     PatientService service;
+
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     public Response getAll() {

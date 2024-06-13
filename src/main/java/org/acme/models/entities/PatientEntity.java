@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.acme.utils.Role;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -39,6 +42,9 @@ public class PatientEntity {
     @NotBlank(message = "Telefono no puede ser vacio.")
     @Column(name = "phone", unique = true)
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @JsonProperty("appointments")
     @OneToMany(mappedBy = "patient", fetch = FetchType.EAGER)

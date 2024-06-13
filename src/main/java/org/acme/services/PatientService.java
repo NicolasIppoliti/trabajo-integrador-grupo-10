@@ -3,6 +3,8 @@ package org.acme.services;
 import org.acme.domain.Patient;
 import org.acme.mappers.PatientMapper;
 import org.acme.repositories.PatientRepository;
+import org.acme.utils.Role;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,6 +35,7 @@ public class PatientService {
     @Transactional
     public Patient create(Patient patient) {
         var entity = mapper.toEntity(patient);
+        entity.setRole(Role.PATIENT);
         repository.persist(entity);
         return mapper.toDomain(entity);
     }

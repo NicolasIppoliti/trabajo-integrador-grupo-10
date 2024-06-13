@@ -1,5 +1,6 @@
 package org.acme.security;
 
+import org.acme.models.entities.PatientEntity;
 import org.acme.security.utils.TokenUtils;
 import org.eclipse.microprofile.jwt.Claims;
 
@@ -7,10 +8,11 @@ import org.jboss.logmanager.Logger;
 
 import org.jose4j.jwt.JwtClaims;
 
+import io.smallrye.jwt.build.Jwt;
 //import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
-
+import java.util.Collections;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -22,11 +24,29 @@ public class TokenService {
   
   
   
-    public String generatePatientToken(String email, String username) {
+    public String generatePatientToken(PatientEntity patient) {
+      try {
+          JwtClaims jwtClaims = new JwtClaims();
+          jwtClaims.setIssuer("alMedin");
+          jwtClaims.setJwtId(UUID.randomUUID().toString());
+          jwtClaims.setSubject(patient.getEmail());
+          jwtClaims.setClaim(Claims.upn.name(), patient.getEmail());
+          jwtClaims.setClaim(Claims.preferred_username.name(), patient.getEmail());
+          jwtClaims.setClaim("firstName", patient.getFirstName());
+          jwtClaims.setClaim("lastName", patient.getLastName());
+          jwtClaims.setClaim(Claims.groups.name(), Collections.singletonList(patient.getRole().name()));
+          jwtClaims.setAudience("using-jwt");
+          jwtClaims.setExpirationTimeMinutesInTheFuture(60);
   
-      return generateToken(email, username, Roles.PATIENT);
+          String token = TokenUtils.generateTokenString(jwtClaims);
+          LOGGER.info("TOKEN generated: " + token);
+          return token;
   
-    }
+      } catch (Exception e) {
+          e.printStackTrace();
+          throw new RuntimeException(e);
+      }
+  }
   
   
   

@@ -31,7 +31,7 @@ public class AuthResource {
   @Transactional
   @GET
   @Path("/login")
-  public String login(@QueryParam("email")String email, @QueryParam("password") String password) {
+  public Response login(@QueryParam("email")String email, @QueryParam("password") String password) {
     System.out.println("Aqui*************" + patientRepository.findByEmail(email));
     PatientEntity existingPatient = patientRepository.findByEmail(email);
 
@@ -39,9 +39,8 @@ public class AuthResource {
       throw new WebApplicationException(Response.status(404).entity("No user found or password is incorrect").build());
 
     }
-
-    return service.generatePatientToken(existingPatient.getEmail(), existingPatient.getPassword());
-
+    String token = service.generatePatientToken(existingPatient);
+    return Response.ok(token).build();
   }
 
 }
