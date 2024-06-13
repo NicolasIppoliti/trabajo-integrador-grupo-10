@@ -24,6 +24,18 @@ public class AppointmentRepository implements PanacheRepositoryBase<AppointmentE
                  .setParameter("endDate", date.plusDays(1).atStartOfDay())
                  .getResultList();
     }
+
+    public List<AppointmentEntity> findAppointmentsByDoctor(Long doctorId){
+        return em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.doctor.id = :doctorId", AppointmentEntity.class)
+        .setParameter("doctorId", doctorId)
+        .getResultList();
+    }
+
+    public List<AppointmentEntity> findAppointmentsByPatientId(Long patientId){
+        return em.createQuery("SELECT a FROM AppointmentEntity a WHERE a.patient.id = :patientId", AppointmentEntity.class)
+        .setParameter("patientId", patientId)
+        .getResultList();
+    }
     
 	
 }

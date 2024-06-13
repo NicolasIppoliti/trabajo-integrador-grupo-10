@@ -3,6 +3,7 @@ package org.acme.repositories;
 import java.util.List;
 import java.util.Set;
 
+import org.acme.models.entities.AppointmentEntity;
 import org.acme.models.entities.BranchEntity;
 import org.acme.models.entities.DoctorEntity;
 import org.acme.models.entities.ScheduleEntity;
@@ -34,4 +35,8 @@ public class DoctorRepository implements PanacheRepositoryBase<DoctorEntity, Lon
     public List<DoctorEntity> findByBranch(BranchEntity branch) {
         return find("branch", branch).list();
     }
+
+    public List<DoctorEntity> findAppointments(AppointmentEntity appointments) {
+        return find("appointments", appointments).list();
+}
 }

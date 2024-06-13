@@ -14,8 +14,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-    @Path("/users")
-
 @Consumes(MediaType.APPLICATION_JSON)
 
 @Produces(MediaType.APPLICATION_JSON)

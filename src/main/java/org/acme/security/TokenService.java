@@ -8,8 +8,6 @@ import org.jboss.logmanager.Logger;
 
 import org.jose4j.jwt.JwtClaims;
 
-import io.smallrye.jwt.build.Jwt;
-//import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +30,7 @@ public class TokenService {
           jwtClaims.setSubject(patient.getEmail());
           jwtClaims.setClaim(Claims.upn.name(), patient.getEmail());
           jwtClaims.setClaim(Claims.preferred_username.name(), patient.getEmail());
+          jwtClaims.setClaim("id", patient.getId());
           jwtClaims.setClaim("firstName", patient.getFirstName());
           jwtClaims.setClaim("lastName", patient.getLastName());
           jwtClaims.setClaim(Claims.groups.name(), Collections.singletonList(patient.getRole().name()));
@@ -47,17 +46,7 @@ public class TokenService {
           throw new RuntimeException(e);
       }
   }
-  
-  
-  
-    public String generateAuthorizedPatientToken(String serviceId, String serviceName) {
-  
-      return generateToken(serviceId,serviceName,Roles.AUTHORIZED_PATIENT);
-  
-    }
-  
-  
-  
+   
     public String generateToken(String subject, String name, String... roles) {
   
       try {
