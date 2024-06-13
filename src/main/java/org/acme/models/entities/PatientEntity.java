@@ -44,6 +44,7 @@ public class PatientEntity {
     private String phone;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 
     @JsonProperty("appointments")
