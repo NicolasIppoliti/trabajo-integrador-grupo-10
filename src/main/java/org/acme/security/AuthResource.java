@@ -19,7 +19,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-    @Path("/users")
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,7 +58,7 @@ public class AuthResource {
     PatientEntity existingPatient = patientRepository.findByEmail(email);
 
     if (existingPatient != null) {
-      throw new WebApplicationException(Response.status(404).entity("Usuario ya creado con este email.").build());
+      throw new WebApplicationException(Response.status(409).entity("Usuario ya creado con este email.").build());
     }
 
     PatientEntity newPatient = new PatientEntity();

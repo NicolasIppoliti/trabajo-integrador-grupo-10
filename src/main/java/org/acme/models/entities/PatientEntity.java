@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.acme.utils.Role;
 
@@ -48,9 +48,9 @@ public class PatientEntity {
     private Role role;
 
     @JsonProperty("appointments")
-    @OneToMany(mappedBy = "patient", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "patient-appointments")
-    private List<AppointmentEntity> appointments = new ArrayList<>();
+    private Set<AppointmentEntity> appointments = new HashSet<>();
     
     public void setId(Long id) {
         this.id = id;
