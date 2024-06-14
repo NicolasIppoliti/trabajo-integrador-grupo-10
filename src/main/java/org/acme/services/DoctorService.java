@@ -71,7 +71,7 @@ public class DoctorService {
             updatedEntity.setDni(doctor.getDni());
             updatedEntity.setSpeciality(doctor.getSpeciality());
             updatedEntity.setBranch(branch);
-            entityManager.merge(updatedEntity);
+            updatedEntity = entityManager.merge(updatedEntity);
             return updatedEntity;
         }
         return null;

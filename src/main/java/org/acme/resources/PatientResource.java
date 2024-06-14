@@ -4,12 +4,14 @@ import org.acme.domain.Patient;
 import org.acme.services.PatientService;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/pacientes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,12 +49,15 @@ public class PatientResource {
     }
 
     @POST
-    public Response create(Patient patient) {
+    public Response create(@Valid Patient patient) {
         try {
             Patient createdPatient = service.create(patient);
             return Response.status(Response.Status.CREATED).entity(createdPatient).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Error al crear el paciente: " + e.getMessage()).build();
+        } catch (ConstraintViolationException e) {
+            String violations = e.getConstraintViolations().stream()
+                    .map(violation -> violation.getMessage())
+                    .collect(Collectors.joining(", "));
+            return Response.status(Response.Status.BAD_REQUEST).entity(violations).build();
         }
     }
 

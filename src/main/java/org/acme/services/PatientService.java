@@ -35,7 +35,6 @@ public class PatientService {
     @Transactional
     public Patient create(Patient patient) {
         var entity = mapper.toEntity(patient);
-        entity.setRole(Role.PATIENT);
         repository.persist(entity);
         return mapper.toDomain(entity);
     }

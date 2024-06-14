@@ -23,7 +23,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -60,9 +59,7 @@ public class DoctorEntity {
     @JoinTable(
         name = "doctor_schedule",
         joinColumns = @JoinColumn(name = "doctor_id"),
-        inverseJoinColumns = @JoinColumn(name = "schedule_id"),
-        uniqueConstraints = @UniqueConstraint(columnNames = { "doctor_id", "day" })
-        )
+        inverseJoinColumns = @JoinColumn(name = "schedule_id"))
     private Set<ScheduleEntity> schedules = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

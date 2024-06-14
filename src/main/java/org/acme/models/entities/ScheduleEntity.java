@@ -6,12 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 import org.acme.utils.Day;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "schedules", uniqueConstraints = @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}))
+@Table(name = "schedules", uniqueConstraints = { 
+        @UniqueConstraint(columnNames = {"day", "entry_time", "departure_time"}),
+        @UniqueConstraint(columnNames = {"doctor_id", "day"})
+    })
 public class ScheduleEntity {
 
     @Id
@@ -33,6 +38,11 @@ public class ScheduleEntity {
     @Column(name = "departure_time")
     @JsonProperty("departureTime")
     private LocalTime departureTime;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    private DoctorEntity doctorEntity;
 
     public void setId(Long id) {
         this.id = id;
