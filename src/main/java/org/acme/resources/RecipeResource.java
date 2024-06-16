@@ -4,21 +4,15 @@ import org.acme.domain.Recipe;
 import org.acme.models.entities.RecipeEntity;
 import org.acme.repositories.AppointmentRepository;
 import org.acme.repositories.PatientRepository;
-import org.acme.services.AppointmentService;
 import org.acme.services.RecipeService;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.eclipse.microprofile.jwt.Claims;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.List;
 import java.util.Set;

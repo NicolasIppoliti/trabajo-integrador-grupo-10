@@ -7,7 +7,6 @@ import org.acme.mappers.PatientMapper;
 import org.acme.models.entities.PatientEntity;
 import org.acme.repositories.PatientRepository;
 import org.acme.services.PatientService;
-import org.acme.utils.Role;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -22,12 +21,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriBuilder;
-import jakarta.ws.rs.core.UriInfo;
-
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
