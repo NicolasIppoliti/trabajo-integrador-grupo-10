@@ -1,6 +1,7 @@
 package org.acme.security;
 
 import org.acme.models.entities.PatientEntity;
+import org.acme.repositories.PatientRepository;
 import org.acme.security.utils.TokenUtils;
 import org.eclipse.microprofile.jwt.Claims;
 
@@ -9,12 +10,17 @@ import org.jboss.logmanager.Logger;
 import org.jose4j.jwt.JwtClaims;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
 @ApplicationScoped
 public class TokenService {
+
+  @Inject
+  PatientRepository patientRepository;
 
 
 
@@ -24,6 +30,7 @@ public class TokenService {
   
     public String generatePatientToken(PatientEntity patient) {
       try {
+
           JwtClaims jwtClaims = new JwtClaims();
           jwtClaims.setIssuer("alMedin");
           jwtClaims.setJwtId(UUID.randomUUID().toString());
