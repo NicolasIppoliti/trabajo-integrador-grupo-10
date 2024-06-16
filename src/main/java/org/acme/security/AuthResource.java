@@ -1,14 +1,20 @@
 package org.acme.security;
 
+import java.util.stream.Collectors;
+
+import org.acme.domain.Patient;
 import org.acme.mappers.PatientMapper;
 import org.acme.models.entities.PatientEntity;
 import org.acme.repositories.PatientRepository;
+import org.acme.services.PatientService;
 import org.acme.utils.Role;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -16,8 +22,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,6 +39,9 @@ public class AuthResource {
 
   @Inject
   PatientRepository patientRepository;
+
+  @Inject
+  PatientService pService;
   
   @Inject
   PatientMapper mapper;
@@ -50,33 +62,60 @@ public class AuthResource {
     return Response.ok(token).build();
   }
   
+  // @SuppressWarnings("resource") // Falso positivo, por eso el SuppressWarnings
+  // @Transactional
+  // @POST
+  // @Path("/register")
+  // public Response register(@QueryParam("email") String email, @QueryParam("password") String password, @QueryParam("firstName") String firstName, @QueryParam("lastName") String lastName, @QueryParam("phone") String phone) {
+  //   PatientEntity existingPatient = patientRepository.findByEmail(email);
+
+  //   if (existingPatient != null) {
+  //     throw new WebApplicationException(Response.status(409).entity("Usuario ya creado con este email.").build());
+  //   }
+
+  //   PatientEntity newPatient = new PatientEntity();
+  //   newPatient.setEmail(email);
+  //   newPatient.setPassword(password);
+  //   newPatient.setFirstName(firstName);
+  //   newPatient.setLastName(lastName);
+  //   newPatient.setPhone(phone);
+  //   newPatient.setRole(Role.PATIENT);
+
+  //   patientRepository.persist(newPatient);
+
+  //   String token = service.generatePatientToken(newPatient);
+
+  //   JsonObject jsonResponse = Json.createObjectBuilder()
+  //                                 .add("token", token)
+  //                                 .build();
+
+  //   return Response.ok(jsonResponse).build();
+  // }
+
   @SuppressWarnings("resource") // Falso positivo, por eso el SuppressWarnings
-  @Transactional
   @POST
   @Path("/register")
-  public Response register(@QueryParam("email") String email, @QueryParam("password") String password, @QueryParam("firstName") String firstName, @QueryParam("lastName") String lastName, @QueryParam("phone") String phone) {
-    PatientEntity existingPatient = patientRepository.findByEmail(email);
+  public Response register(@Valid Patient patient) {
+    try {
+      PatientEntity existingPatient = patientRepository.findByEmail(patient.getEmail());
 
-    if (existingPatient != null) {
-      throw new WebApplicationException(Response.status(409).entity("Usuario ya creado con este email.").build());
+      if (existingPatient != null) {
+        throw new WebApplicationException(Response.status(409).entity("Usuario ya creado con este email.").build());
+      }
+      String token = pService.RegisterAndGetToken(patient);
+
+      JsonObject jsonResponse = Json.createObjectBuilder()
+          .add("token", token)
+          .build();
+
+      // Devuelvo respuesta 201 y el string del token creado!
+      return Response.ok(jsonResponse).build();
+    } catch (ConstraintViolationException e) {
+      String violations = e.getConstraintViolations().stream()
+          .map(violation -> violation.getMessage())
+          .collect(Collectors.joining(", "));
+      return Response.status(Response.Status.BAD_REQUEST).entity(violations).build();
     }
-
-    PatientEntity newPatient = new PatientEntity();
-    newPatient.setEmail(email);
-    newPatient.setPassword(password);
-    newPatient.setFirstName(firstName);
-    newPatient.setLastName(lastName);
-    newPatient.setPhone(phone);
-    newPatient.setRole(Role.PATIENT);
-
-    patientRepository.persist(newPatient);
-
-    String token = service.generatePatientToken(newPatient);
-
-    JsonObject jsonResponse = Json.createObjectBuilder()
-                                  .add("token", token)
-                                  .build();
-
-    return Response.ok(jsonResponse).build();
   }
+
 }

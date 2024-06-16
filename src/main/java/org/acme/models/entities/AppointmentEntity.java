@@ -7,11 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @NoArgsConstructor
@@ -39,6 +41,10 @@ public class AppointmentEntity {
     @NotNull(message = "Especialista no puede ser vacio.")
     //@JsonBackReference(value = "doctor-appointments")
     private DoctorEntity doctor;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RecipeEntity> recipes;
 
     @NotBlank(message = "Razon del turno no puede ser vacio.")
     private String queryReason;

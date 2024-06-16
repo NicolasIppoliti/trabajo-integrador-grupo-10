@@ -67,7 +67,7 @@ public class DoctorEntity {
     @NotNull
     private BranchEntity branch;
     
-
+    @JsonIgnore
     @JsonProperty("appointments")
     @OneToMany(mappedBy = "doctor", fetch = FetchType.EAGER)
     @JsonManagedReference(value = "doctor-appointments")

@@ -41,6 +41,9 @@ public class BranchService {
         var entity = mapper.toEntity(branch);
         entity = entityManager.merge(entity);
         repository.persist(entity);
+        System.out.println("Entidad por salir del create" + entity);
+        Branch createdBranch = mapper.toDomain(entity);
+    System.out.println("Created Branch: " + createdBranch);
         return mapper.toDomain(entity);
     }
 

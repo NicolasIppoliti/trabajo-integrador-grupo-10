@@ -14,5 +14,4 @@ public class DoctorResponseDTO {
     private Speciality speciality;
     private Set<Schedule> schedules;
     private Branch branch;
-    private Set<Appointment> appointments;
 }

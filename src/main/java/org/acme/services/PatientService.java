@@ -3,6 +3,7 @@ package org.acme.services;
 import org.acme.domain.Patient;
 import org.acme.mappers.PatientMapper;
 import org.acme.repositories.PatientRepository;
+import org.acme.security.TokenService;
 import org.acme.utils.Role;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,6 +21,9 @@ public class PatientService {
 
     @Inject
     PatientMapper mapper;
+
+    @Inject
+    TokenService tService;
 
     @Inject
     EntityManager entityManager;
@@ -59,5 +63,14 @@ public class PatientService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public String RegisterAndGetToken(Patient patient) {
+        var entity = mapper.toEntity(patient);
+        entity.setRole(Role.PATIENT);
+        repository.persist(entity);
+        String token = tService.generatePatientToken(entity);
+        return token;
     }
 }

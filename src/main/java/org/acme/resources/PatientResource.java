@@ -1,6 +1,8 @@
 package org.acme.resources;
 
 import org.acme.domain.Patient;
+import org.acme.models.entities.PatientEntity;
+import org.acme.repositories.PatientRepository;
 import org.acme.services.PatientService;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -22,6 +24,9 @@ public class PatientResource {
     PatientService service;
 
     @Inject
+    PatientRepository repository;
+
+    @Inject
     JsonWebToken jwt;
 
     @GET
@@ -30,7 +35,8 @@ public class PatientResource {
             List<Patient> patients = service.getAll();
             return Response.ok(patients).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los pacientes").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los pacientes")
+                    .build();
         }
     }
 
@@ -44,13 +50,21 @@ public class PatientResource {
             }
             return Response.ok(patient).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el paciente").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener el paciente")
+                    .build();
         }
     }
 
+    @SuppressWarnings("resource") // Suprimido por falso positivo
     @POST
     public Response create(@Valid Patient patient) {
         try {
+            PatientEntity existingPatient = repository.findByEmail(patient.getEmail());
+
+            if (existingPatient != null) {
+                throw new WebApplicationException(
+                        Response.status(409).entity("Usuario ya creado con este email.").build());
+            }
             Patient createdPatient = service.create(patient);
             return Response.status(Response.Status.CREATED).entity(createdPatient).build();
         } catch (ConstraintViolationException e) {
@@ -71,7 +85,8 @@ public class PatientResource {
             }
             return Response.ok(updatedPatient).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el paciente").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al actualizar el paciente")
+                    .build();
         }
     }
 
@@ -85,7 +100,8 @@ public class PatientResource {
                 return Response.status(Response.Status.NOT_FOUND).entity("Paciente no encontrado").build();
             }
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el paciente").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al eliminar el paciente")
+                    .build();
         }
     }
 }
