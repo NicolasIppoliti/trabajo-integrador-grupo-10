@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -18,6 +20,7 @@ public class RecipeEntity {
     private String description;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "appointment_id", nullable = false)
     private AppointmentEntity appointment;
 

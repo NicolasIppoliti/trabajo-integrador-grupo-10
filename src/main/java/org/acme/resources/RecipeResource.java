@@ -3,14 +3,23 @@ package org.acme.resources;
 import org.acme.domain.Recipe;
 import org.acme.models.entities.RecipeEntity;
 import org.acme.repositories.AppointmentRepository;
+import org.acme.repositories.PatientRepository;
 import org.acme.services.AppointmentService;
 import org.acme.services.RecipeService;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +33,14 @@ public class RecipeResource {
 
     @Inject
     AppointmentRepository aRepository;
+
+    @Inject
+    PatientRepository pRepository;
+
+    @Inject
+    @Claim("id")
+    private ClaimValue<Long> patientIdFromToken;
+
 
     @GET
     public Response getAll() {
@@ -92,10 +109,37 @@ public class RecipeResource {
     @RolesAllowed("AUTHORIZED_PATIENT")
     public Response getByAppointmentId(@PathParam("id") Long id){
         try {
+
+                Long patientId = patientIdFromToken.getValue();
+
+            System.out.println("ID del paciente convertido a Long: " + patientId);
+
+            // Obtener los IDs de las citas del paciente
+            Set<Long> appointmentIds = pRepository.findAppointmentIdsByPatientId(patientId);
+            System.out.println("IDs de citas del paciente: " + appointmentIds);
+
+            // Verificar si el paciente tiene permiso para ver la cita solicitada
+            if (!appointmentIds.contains(id)) {
+                System.out.println("El paciente no tiene permiso para ver la cita con ID: " + id);
+                return Response.status(Response.Status.FORBIDDEN)
+                               .entity("No tiene permiso para ver esta cita")
+                               .build();
+            }
+
+            // Obtener las recetas relacionadas con el appointmentId
             Set<RecipeEntity> recipes = aRepository.findRecipesByAppointmentId(id);
+            System.out.println("Recetas obtenidas: " + recipes);
+
             return Response.ok(recipes).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener las recetas").build();
+            System.err.println("Error al obtener las recetas");
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Error al obtener las recetas")
+                           .build();
         }
     }
 }
+
+
+

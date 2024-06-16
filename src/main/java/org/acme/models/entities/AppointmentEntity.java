@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -44,5 +45,31 @@ public class AppointmentEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "AppointmentEntity{" +
+               "id=" + id +
+               ", patient=" + (patient != null ? patient.getId() : null) + // Evita recursión
+               ", dateHour=" + dateHour +
+               ", doctor=" + (doctor != null ? doctor.getId() : null) + // Evita recursión
+               ", queryReason=" + queryReason +
+               '}';
+    }
+
+    public int hashCode() {
+        return Objects.hash(id, dateHour, queryReason);
+    }
+
+    // Sobrescribir equals para evitar recursión
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AppointmentEntity that = (AppointmentEntity) o;
+        return Objects.equals(id, that.id) &&
+               Objects.equals(dateHour, that.dateHour) &&
+               Objects.equals(queryReason, that.queryReason);
     }
 }
