@@ -37,6 +37,9 @@ Por defecto su aplicacion iniciara cargando varios insert que se encuntran en el
 
 
 ## API Endpoints
+## Swagger de OpenApi: http://localhost:8080/swagger-ui/#/
+Para probar los endpoints con facilidad, sin necesidad de cargar todo manual en Postman incluimos SmallRye OpenAPI implementando su interfaz grafica de navegador. Alli podra continuar probando el proyecto.
+
 ## Pacientes:
    **Crear un paciente:**
  Este endpoint permite la creación de un nuevo paciente con ciertas restricciones de validación para el email, número de teléfono y contraseña.
