@@ -100,14 +100,13 @@ public class BranchServiceTest {
         verify(branchRepository, times(1)).findById(1L);
     }
 
-    // @Test
-    // @DisplayName("Test create() method")
-    // @Transactional
-    // public void testCreateBranch() {
-    //     // Mock input
-    //     Branch branch = new Branch(1L, "New Branch", "New Address", "New City");
+    @Test
+    @DisplayName("Test create() method")
+    @Transactional
+    public void testCreateBranch() {
+        // Mock input
+        Branch branch = new Branch(1L, "New Branch", "New Address", "New City");
 
-<<<<<<< HEAD
         // Mock mapper response
         BranchEntity mockEntity = new BranchEntity(1L, "New Branch", "New Address", "New City");
         when(mapper.toEntity(branch)).thenReturn(mockEntity);
@@ -120,22 +119,10 @@ public class BranchServiceTest {
 
         // Mock mapper response for toDomain
         when(mapper.toDomain(mockEntity)).thenReturn(new Branch(1L, "New Branch", "New Address", "New City"));
-=======
-    //     // Mock mapper response
-    //     BranchEntity mockEntity = new BranchEntity(1L, "New Branch", "New Address", "New City");
-    //     Mockito.when(mapper.toEntity(branch)).thenReturn(mockEntity);
-    //     System.out.println("DTO: " + branch);
-    //     System.out.println("Entity: " + mockEntity);
 
-    //     // Mock repository behavior
-    //    // Mockito.doNothing().when(entityManager).merge(Mockito.any(BranchEntity.class));
-    //     Mockito.doNothing().when(branchRepository).persist(Mockito.any(BranchEntity.class));
->>>>>>> 299f1b8cb01adf2a06dad5615dbd1bf9f69df01b
+        // Call service method
+        Branch createdBranch = branchService.create(branch);
 
-    //     // Call service method
-    //     Branch createdBranch = branchService.create(branch);
-
-<<<<<<< HEAD
         // Assertions
         assertNotNull(createdBranch);
         assertEquals(1L, createdBranch.getId());
@@ -146,29 +133,14 @@ public class BranchServiceTest {
         // Verify repository method invocation
         verify(branchRepository, times(1)).persist(any(BranchEntity.class));
     }
-=======
-    //     // Assertions
-    //     System.out.println("Created:" + createdBranch);
-    //     assertNotNull(createdBranch);
-    //     assertEquals(1L, createdBranch.getId());
-    //     assertEquals("New Branch", createdBranch.getName());
-    //     assertEquals("New Address", createdBranch.getAddress());
-    //     assertEquals("New City", createdBranch.getCity());
 
+    @Test
+    @DisplayName("Test update() method")
+    @Transactional
+    public void testUpdateBranch() {
+        // Mock input
+        Branch updatedBranch = new Branch(1L, "Updated Branch", "Updated Address", "Updated City");
 
-    //     // Verify repository method invocation
-    //     verify(branchRepository, times(1)).persist(any(BranchEntity.class));
-    // }
->>>>>>> 299f1b8cb01adf2a06dad5615dbd1bf9f69df01b
-
-    // @Test
-    // @DisplayName("Test update() method")
-    // @Transactional
-    // public void testUpdateBranch() {
-    //     // Mock input
-    //     Branch updatedBranch = new Branch(1L, "Updated Branch", "Updated Address", "Updated City");
-
-<<<<<<< HEAD
         // Mock repository response
         BranchEntity existingEntity = new BranchEntity(1L, "Old Branch", "Old Address", "Old City");
         when(branchRepository.findById(1L)).thenReturn(existingEntity);
@@ -182,36 +154,20 @@ public class BranchServiceTest {
 
         // Mock mapper response for toDomain
         when(mapper.toDomain(updatedEntity)).thenReturn(new Branch(1L, "Updated Branch", "Updated Address", "Updated City"));
-=======
-    //     // Mock repository response
-    //     BranchEntity existingEntity = new BranchEntity(1L, "Old Branch", "Old Address", "Old City");
-    //     Mockito.when(branchRepository.findById(1L)).thenReturn(existingEntity);
 
-    //     // Mock mapper response
-    //     BranchEntity updatedEntity = new BranchEntity(1L, "Updated Branch", "Updated Address", "Updated City");
-    //     Mockito.when(mapper.toEntity(updatedBranch)).thenReturn(updatedEntity);
->>>>>>> 299f1b8cb01adf2a06dad5615dbd1bf9f69df01b
+        // Call service method
+        Branch updated = branchService.update(1L, updatedBranch);
 
-    //     // Call service method
-    //     Branch updated = branchService.update(1L, updatedBranch);
+        // Assertions
+        assertNotNull(updated);
+        assertEquals(1L, updated.getId());
+        assertEquals("Updated Branch", updated.getName());
+        assertEquals("Updated Address", updated.getAddress());
 
-    //     // Assertions
-    //     assertNotNull(updated);
-    //     assertEquals(1L, updated.getId());
-    //     assertEquals("Updated Branch", updated.getName());
-    //     assertEquals("Updated Address", updated.getAddress());
-
-<<<<<<< HEAD
         // Verify repository method invocation
         verify(branchRepository, times(1)).findById(1L);
         verify(entityManager, times(1)).merge(any(BranchEntity.class));
     }
-=======
-    //     // Verify repository method invocation
-    //     Mockito.verify(branchRepository, Mockito.times(1)).findById(1L);
-    //     Mockito.verify(branchRepository, Mockito.times(1)).persist(any(BranchEntity.class));
-    // }
->>>>>>> 299f1b8cb01adf2a06dad5615dbd1bf9f69df01b
 
     @Test
     @DisplayName("Test delete() method")
