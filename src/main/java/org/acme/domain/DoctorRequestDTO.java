@@ -1,5 +1,6 @@
 package org.acme.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import org.acme.utils.Speciality;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 @Data
+@AllArgsConstructor
 public class DoctorRequestDTO {
     @NotBlank(message = "El doctor debe tener nombre de pila")
     private String firstName;

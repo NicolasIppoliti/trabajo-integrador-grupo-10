@@ -14,43 +14,38 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @QuarkusTest
 public class BranchServiceTest {
 
-    @Inject
+    @InjectMocks
     BranchService branchService;
 
-    @InjectMock
+    @Mock
     BranchRepository branchRepository;
 
-    @Inject
-    EntityManager entityManager;
-
-    @InjectMock
+    @Mock
     BranchMapper mapper;
+
+    @Mock
+    EntityManager entityManager;
 
     @BeforeEach
     public void setup() {
-        entityManager = mock(EntityManager.class);
-        when(branchRepository.getEntityManager()).thenReturn(entityManager);
-        Branch branch = new Branch();
-        branch.setName("Sucursal");
-        branch.setAddress("dire 1234");
-        branch.setCity("Moron");
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -61,10 +56,10 @@ public class BranchServiceTest {
         mockEntities.add(new BranchEntity(1L, "Branch 1", "Address 1", "City 1"));
         mockEntities.add(new BranchEntity(2L, "Branch 2", "Address 2", "City 2"));
         mockEntities.add(new BranchEntity(3L, "Branch 3", "Address 3", "City 3"));
-        Mockito.when(branchRepository.listAll()).thenReturn(mockEntities);
+        when(branchRepository.listAll()).thenReturn(mockEntities);
 
         // Mock mapper response
-        Mockito.when(mapper.toDomain(Mockito.any(BranchEntity.class))).thenAnswer(invocation -> {
+        when(mapper.toDomain(any(BranchEntity.class))).thenAnswer(invocation -> {
             BranchEntity entity = invocation.getArgument(0);
             return new Branch(entity.getId(), entity.getName(), entity.getAddress(), entity.getCity());
         });
@@ -79,7 +74,7 @@ public class BranchServiceTest {
         assertEquals("Address 2", branches.get(1).getAddress());
 
         // Verify repository method invocation
-        Mockito.verify(branchRepository, Mockito.times(1)).listAll();
+        verify(branchRepository, times(1)).listAll();
     }
 
     @Test
@@ -87,10 +82,10 @@ public class BranchServiceTest {
     public void testGetBranchById() {
         // Mock repository response
         BranchEntity mockEntity = new BranchEntity(1L, "Branch 1", "Address 1", "City 1");
-        Mockito.when(branchRepository.findById(1L)).thenReturn(mockEntity);
+        when(branchRepository.findById(1L)).thenReturn(mockEntity);
 
         // Mock mapper response
-        Mockito.when(mapper.toDomain(mockEntity)).thenReturn(new Branch(1L, "Branch 1", "Address 1", "City 1"));
+        when(mapper.toDomain(mockEntity)).thenReturn(new Branch(1L, "Branch 1", "Address 1", "City 1"));
 
         // Call service method
         Branch branch = branchService.getById(1L);
@@ -102,7 +97,7 @@ public class BranchServiceTest {
         assertEquals("Address 1", branch.getAddress());
 
         // Verify repository method invocation
-        Mockito.verify(branchRepository, Mockito.times(1)).findById(1L);
+        verify(branchRepository, times(1)).findById(1L);
     }
 
     @Test
@@ -114,25 +109,26 @@ public class BranchServiceTest {
 
         // Mock mapper response
         BranchEntity mockEntity = new BranchEntity(1L, "New Branch", "New Address", "New City");
-        Mockito.when(mapper.toEntity(branch)).thenReturn(mockEntity);
-        System.out.println("DTO: " + branch);
-        System.out.println("Entity: " + mockEntity);
+        when(mapper.toEntity(branch)).thenReturn(mockEntity);
+
+        // Mock EntityManager behavior
+        when(entityManager.merge(any(BranchEntity.class))).thenReturn(mockEntity);
 
         // Mock repository behavior
-       // Mockito.doNothing().when(entityManager).merge(Mockito.any(BranchEntity.class));
-        Mockito.doNothing().when(branchRepository).persist(Mockito.any(BranchEntity.class));
+        Mockito.doNothing().when(branchRepository).persist(any(BranchEntity.class));
+
+        // Mock mapper response for toDomain
+        when(mapper.toDomain(mockEntity)).thenReturn(new Branch(1L, "New Branch", "New Address", "New City"));
 
         // Call service method
         Branch createdBranch = branchService.create(branch);
 
         // Assertions
-        System.out.println("Created:" + createdBranch);
         assertNotNull(createdBranch);
         assertEquals(1L, createdBranch.getId());
         assertEquals("New Branch", createdBranch.getName());
         assertEquals("New Address", createdBranch.getAddress());
         assertEquals("New City", createdBranch.getCity());
-
 
         // Verify repository method invocation
         verify(branchRepository, times(1)).persist(any(BranchEntity.class));
@@ -147,11 +143,17 @@ public class BranchServiceTest {
 
         // Mock repository response
         BranchEntity existingEntity = new BranchEntity(1L, "Old Branch", "Old Address", "Old City");
-        Mockito.when(branchRepository.findById(1L)).thenReturn(existingEntity);
+        when(branchRepository.findById(1L)).thenReturn(existingEntity);
 
         // Mock mapper response
         BranchEntity updatedEntity = new BranchEntity(1L, "Updated Branch", "Updated Address", "Updated City");
-        Mockito.when(mapper.toEntity(updatedBranch)).thenReturn(updatedEntity);
+        when(mapper.toEntity(updatedBranch)).thenReturn(updatedEntity);
+
+        // Mock EntityManager behavior
+        when(entityManager.merge(any(BranchEntity.class))).thenReturn(updatedEntity);
+
+        // Mock mapper response for toDomain
+        when(mapper.toDomain(updatedEntity)).thenReturn(new Branch(1L, "Updated Branch", "Updated Address", "Updated City"));
 
         // Call service method
         Branch updated = branchService.update(1L, updatedBranch);
@@ -163,8 +165,8 @@ public class BranchServiceTest {
         assertEquals("Updated Address", updated.getAddress());
 
         // Verify repository method invocation
-        Mockito.verify(branchRepository, Mockito.times(1)).findById(1L);
-        Mockito.verify(branchRepository, Mockito.times(1)).persist(any(BranchEntity.class));
+        verify(branchRepository, times(1)).findById(1L);
+        verify(entityManager, times(1)).merge(any(BranchEntity.class));
     }
 
     @Test
@@ -173,7 +175,7 @@ public class BranchServiceTest {
     public void testDeleteBranch() {
         // Mock repository response
         BranchEntity existingEntity = new BranchEntity(1L, "Branch to delete", "Address", "City");
-        Mockito.when(branchRepository.findById(1L)).thenReturn(existingEntity);
+        when(branchRepository.findById(1L)).thenReturn(existingEntity);
 
         // Call service method
         boolean deleted = branchService.delete(1L);
@@ -182,7 +184,7 @@ public class BranchServiceTest {
         assertTrue(deleted);
 
         // Verify repository method invocation
-        Mockito.verify(branchRepository, Mockito.times(1)).findById(1L);
-        Mockito.verify(branchRepository, Mockito.times(1)).delete(any(BranchEntity.class));
+        verify(branchRepository, times(1)).findById(1L);
+        verify(branchRepository, times(1)).delete(any(BranchEntity.class));
     }
 }
