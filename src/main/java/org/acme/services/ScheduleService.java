@@ -37,7 +37,7 @@ public class ScheduleService {
         var entity = mapper.toEntity(schedule);
         entity = entityManager.merge(entity);
         repository.persist(entity);
-        return mapper.toDomain(entity);     //OK
+        return mapper.toDomain(entity);
     }
 
     @Transactional
