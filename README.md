@@ -29,12 +29,15 @@
    Drop database if exists almedin;
    Create database if not exists almedin;
    ```
+   Puedes ver el archivo de configuración completo en [application.properties](./src/main/resources/application.properties).
 3. **Iniciar la aplicacion:**
    ```bash
    ./mvnw quarkus:dev
    ```
 Por defecto su aplicacion iniciara cargando varios insert que se encuntran en el archivo `import.sql` de la carpeta resources. En caso de querer trabajar sin los insert puede comentar todos los registros o remover dicho archivo, pero recomiendo encarecidamente que se usen esos datos de prueba, ya que este sistema esta pensado en ser escalable y tener algunas caracteristicas "un tanto realistas" que suman algo de complejidad para llegar al momento de tener todos los objetos cargados para hacer las pruebas.
 
+## Diagrama Entidad-Relacion de la aplicación
+![Diagrama DER](src/main/resources/docs/almedin_DER.png)
 
 ## API Endpoints
 ## Swagger de OpenApi: http://localhost:8080/swagger-ui/#/
@@ -116,6 +119,40 @@ Para probar los endpoints con facilidad, sin necesidad de cargar todo manual en 
    - Method: `DELETE`
     Metodo por defecto que eliminara el paciente cuyo id sea ingresado.
   ```
+  
+## Autenticación:
+
+   #### Iniciar sesión
+Este endpoint permite que un usuario ingrese su email y contraseña y le devolvera un JWT que podra usar para interactuar con endpoints protegidos, en este caso el endpoint de `GET` `/recetas/{id}`.
+- **URL:** `/auth/login`
+- **Método:** `GET`
+- **Query Param:**
+```json
+      {
+         "email": "john.doe@example.com",
+         "password": "Securepassword12-"
+      }
+   ```
+
+   #### Registrar usuario
+Este endpoint es similar al de `POST` `/especialistas`, ingresando incluso el mismo cuerpo, pero aqui sin importar el rol que especifiques, sera seteado como `PATIENT`. Tambien te devolvera un Token como String que puedes usar para validar tu sesión.
+- **URL:** `/auth/register`
+- **Método:** `POST`
+- **Request Body:**
+```json
+   [
+      {
+         "id": 1,
+         "firstName": "John",
+         "lastName": "Doe",
+         "email": "john.doe@example.com",
+         "phone": "1234567890",
+         "password": "Securepassword12-",
+         "role":  "PATIENT"
+      }
+   ]
+   ```
+
 ## Sucursales:
 
    #### Crear una sucursal
@@ -187,7 +224,9 @@ Este metodo devolvera un 201.OK y el cuerpo del Horario creado, incluyendo su id
 
 ## Especialistas:
    **Crear un especialista:**
-   Este endpoint creara un especialista, a tener en cuenta que su DNI no tiene que estar repetido y su branch_id debe ser de una sucursal creada previamente.
+- Este endpoint creara un especialista, a tener en cuenta que su DNI no tiene que estar repetido y su branch_id debe ser de una sucursal creada previamente.
+- El campo `speciality` es un `ENUM` que puede tomar cualquiera de los siguientes valores: CLINICA_MEDICA, CIRUGIA, DERMATOLOGIA, PEDIATRIA, GINECOLOGIA, ENDOCRINOLOGIA,TRAUMATOLOGIA.
+
    - URL: `/especialistas`
    - Method: `POST`
    - Request Body:
