@@ -174,7 +174,7 @@ public class DoctorServiceTest {
     @Transactional
     public void testAssignScheduleToDoctor() {
         DoctorEntity doctorEntity = new DoctorEntity(1L, "John", "Doe", 12345678, Speciality.TRAUMATOLOGIA, new HashSet<>(), null, new HashSet<>());
-        ScheduleEntity scheduleEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), doctorEntity);
+        ScheduleEntity scheduleEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
 
         when(doctorRepository.findById(1L)).thenReturn(doctorEntity);
         when(scheduleRepository.findById(1L)).thenReturn(scheduleEntity);
@@ -229,7 +229,7 @@ public class DoctorServiceTest {
     @Transactional
     public void testAssignScheduleToDoctorDuplicateScheduleDay() {
         DoctorEntity doctorEntity = new DoctorEntity(1L, "John", "Doe", 12345678, Speciality.TRAUMATOLOGIA, new HashSet<>(), null, new HashSet<>());
-        ScheduleEntity scheduleEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), doctorEntity);
+        ScheduleEntity scheduleEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
 
         when(doctorRepository.findById(1L)).thenReturn(doctorEntity);
         when(scheduleRepository.findById(1L)).thenReturn(scheduleEntity);
