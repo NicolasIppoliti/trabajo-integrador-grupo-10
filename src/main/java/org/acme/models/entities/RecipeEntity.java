@@ -1,6 +1,7 @@
 package org.acme.models.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "recipes")
 public class RecipeEntity {

@@ -47,7 +47,7 @@ public class ScheduleServiceTest {
     @DisplayName("Test getAll() method")
     public void testGetAllSchedules() {
         List<ScheduleEntity> mockEntities = new ArrayList<>();
-        mockEntities.add(new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), null));
+        mockEntities.add(new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0)));
         when(scheduleRepository.listAll()).thenReturn(mockEntities);
 
         when(scheduleMapper.toDomain(any(ScheduleEntity.class))).thenAnswer(invocation -> {
@@ -67,7 +67,7 @@ public class ScheduleServiceTest {
     @Test
     @DisplayName("Test getById() method")
     public void testGetScheduleById() {
-        ScheduleEntity mockEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), null);
+        ScheduleEntity mockEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
         when(scheduleRepository.findById(1L)).thenReturn(mockEntity);
 
         when(scheduleMapper.toDomain(mockEntity)).thenReturn(new Schedule(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0)));
@@ -86,7 +86,7 @@ public class ScheduleServiceTest {
     @Transactional
     public void testCreateSchedule() {
         Schedule schedule = new Schedule(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
-        ScheduleEntity mockEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), null);
+        ScheduleEntity mockEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
 
         when(scheduleMapper.toEntity(schedule)).thenReturn(mockEntity);
         when(entityManager.merge(any(ScheduleEntity.class))).thenReturn(mockEntity);
@@ -106,10 +106,10 @@ public class ScheduleServiceTest {
     @Transactional
     public void testUpdateSchedule() {
         Schedule schedule = new Schedule(1L, Day.TUESDAY, LocalTime.of(10, 0), LocalTime.of(18, 0));
-        ScheduleEntity existingEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), null);
+        ScheduleEntity existingEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
 
         when(scheduleRepository.findById(1L)).thenReturn(existingEntity);
-        ScheduleEntity updatedEntity = new ScheduleEntity(1L, Day.TUESDAY, LocalTime.of(10, 0), LocalTime.of(18, 0), null);
+        ScheduleEntity updatedEntity = new ScheduleEntity(1L, Day.TUESDAY, LocalTime.of(10, 0), LocalTime.of(18, 0));
         when(scheduleMapper.toEntity(schedule)).thenReturn(updatedEntity);
         when(entityManager.merge(any(ScheduleEntity.class))).thenReturn(updatedEntity);
         when(scheduleMapper.toDomain(updatedEntity)).thenReturn(schedule);
@@ -127,7 +127,7 @@ public class ScheduleServiceTest {
     @DisplayName("Test delete() method")
     @Transactional
     public void testDeleteSchedule() {
-        ScheduleEntity existingEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0), null);
+        ScheduleEntity existingEntity = new ScheduleEntity(1L, Day.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0));
         when(scheduleRepository.findById(1L)).thenReturn(existingEntity);
 
         boolean deleted = scheduleService.delete(1L);

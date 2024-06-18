@@ -104,7 +104,7 @@ public class RecipeResource {
     public Response getByAppointmentId(@PathParam("id") Long id){
         try {
 
-                Long patientId = patientIdFromToken.getValue();
+            Long patientId = patientIdFromToken.getValue();
 
             System.out.println("ID del paciente convertido a Long: " + patientId);
 
@@ -114,9 +114,9 @@ public class RecipeResource {
 
             // Verificar si el paciente tiene permiso para ver la cita solicitada
             if (!appointmentIds.contains(id)) {
-                System.out.println("El paciente no tiene permiso para ver la cita con ID: " + id);
+                System.out.println("El paciente no tiene permiso para ver la receta de la cita con ID: " + id);
                 return Response.status(Response.Status.FORBIDDEN)
-                               .entity("No tiene permiso para ver esta cita")
+                               .entity("No tiene permiso para ver la receta de esta cita")
                                .build();
             }
 
