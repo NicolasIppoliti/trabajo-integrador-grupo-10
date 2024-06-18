@@ -82,7 +82,7 @@ VALUES
 (1, 2, '2024-06-16T12:15:50', 'Dolor de cabeza'),
 (2, 3, '2024-06-17T14:30:00', 'Fractura de pierna'),
 (3, 1, '2024-06-18T10:00:00', 'Control ginecológico'),
-(4, 2, '2024-06-19T09:45:00', 'Vacunación'),
+(4, 2, '2024-06-19T09:30:00', 'Vacunación'),
 (1, 3, '2024-06-20T11:20:00', 'Revisión anual'),
 (2, 1, '2024-06-21T15:00:00', 'Consulta general'),
 (3, 2, '2024-06-22T08:30:00', 'Ecografía abdominal');

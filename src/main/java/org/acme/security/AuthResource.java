@@ -57,36 +57,6 @@ public class AuthResource {
     return Response.ok(token).build();
   }
   
-  // @SuppressWarnings("resource") // Falso positivo, por eso el SuppressWarnings
-  // @Transactional
-  // @POST
-  // @Path("/register")
-  // public Response register(@QueryParam("email") String email, @QueryParam("password") String password, @QueryParam("firstName") String firstName, @QueryParam("lastName") String lastName, @QueryParam("phone") String phone) {
-  //   PatientEntity existingPatient = patientRepository.findByEmail(email);
-
-  //   if (existingPatient != null) {
-  //     throw new WebApplicationException(Response.status(409).entity("Usuario ya creado con este email.").build());
-  //   }
-
-  //   PatientEntity newPatient = new PatientEntity();
-  //   newPatient.setEmail(email);
-  //   newPatient.setPassword(password);
-  //   newPatient.setFirstName(firstName);
-  //   newPatient.setLastName(lastName);
-  //   newPatient.setPhone(phone);
-  //   newPatient.setRole(Role.PATIENT);
-
-  //   patientRepository.persist(newPatient);
-
-  //   String token = service.generatePatientToken(newPatient);
-
-  //   JsonObject jsonResponse = Json.createObjectBuilder()
-  //                                 .add("token", token)
-  //                                 .build();
-
-  //   return Response.ok(jsonResponse).build();
-  // }
-
   @SuppressWarnings("resource") // Falso positivo, por eso el SuppressWarnings
   @POST
   @Path("/register")

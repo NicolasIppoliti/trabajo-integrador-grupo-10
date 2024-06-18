@@ -1,5 +1,6 @@
 package org.acme.repositories;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +18,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class DoctorRepository implements PanacheRepositoryBase<DoctorEntity, Long> {
-
 
     public DoctorEntity findByDni(int dni) {
         return find("dni", dni).firstResult();
@@ -41,15 +41,25 @@ public class DoctorRepository implements PanacheRepositoryBase<DoctorEntity, Lon
 
     public List<DoctorEntity> findAppointments(AppointmentEntity appointments) {
         return find("appointments", appointments).list();
-}
-
-public Set<Day> findScheduleDaysByDoctorId(Long doctorId) {
-    DoctorEntity doctor = findById(doctorId);
-    if (doctor != null) {
-        return doctor.getSchedules().stream()
-                     .map(ScheduleEntity::getDay)
-                     .collect(Collectors.toSet());
     }
-    return Collections.emptySet();
-}
+
+    public Set<Day> findScheduleDaysByDoctorId(Long doctorId) {
+        DoctorEntity doctor = findById(doctorId);
+        if (doctor != null) {
+            return doctor.getSchedules().stream()
+                    .map(ScheduleEntity::getDay)
+                    .collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+    public Set<LocalDateTime> findAppointmentDateHourByDoctorId(Long doctorId) {
+        DoctorEntity doctor = findById(doctorId);
+        if (doctor != null) {
+            return doctor.getAppointments().stream()
+                    .map(AppointmentEntity::getDateHour)
+                    .collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
 }
