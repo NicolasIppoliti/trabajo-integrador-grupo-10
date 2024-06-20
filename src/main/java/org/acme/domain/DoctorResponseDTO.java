@@ -15,7 +15,6 @@ public class DoctorResponseDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private int dni;
     private Speciality speciality;
     private Set<ScheduleEntity> schedules;
     private BranchEntity branch;

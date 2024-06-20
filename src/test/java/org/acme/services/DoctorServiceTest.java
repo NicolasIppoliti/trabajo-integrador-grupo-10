@@ -73,7 +73,7 @@ public class DoctorServiceTest {
 
         when(responseMapper.toDomain(any(DoctorEntity.class))).thenAnswer(invocation -> {
             DoctorEntity entity = invocation.getArgument(0);
-            return new DoctorResponseDTO(entity.getId(), entity.getFirstName(), entity.getLastName(), entity.getDni(), entity.getSpeciality(), entity.getSchedules(), entity.getBranch());
+            return new DoctorResponseDTO(entity.getId(), entity.getFirstName(), entity.getLastName(), entity.getSpeciality(), entity.getSchedules(), entity.getBranch());
         });
 
         List<DoctorResponseDTO> doctors = doctorService.getAll();
@@ -91,7 +91,7 @@ public class DoctorServiceTest {
         DoctorEntity mockEntity = new DoctorEntity(1L, "John", "Doe", 12345678, Speciality.TRAUMATOLOGIA, new HashSet<>(), null, new HashSet<>());
         when(doctorRepository.findById(1L)).thenReturn(mockEntity);
 
-        when(responseMapper.toDomain(mockEntity)).thenReturn(new DoctorResponseDTO(1L, "John", "Doe", 12345678, Speciality.TRAUMATOLOGIA, mockEntity.getSchedules(), mockEntity.getBranch()));
+        when(responseMapper.toDomain(mockEntity)).thenReturn(new DoctorResponseDTO(1L, "John", "Doe", Speciality.TRAUMATOLOGIA, mockEntity.getSchedules(), mockEntity.getBranch()));
 
         DoctorResponseDTO doctor = doctorService.getById(1L);
 
