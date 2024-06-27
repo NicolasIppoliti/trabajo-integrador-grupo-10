@@ -1,8 +1,10 @@
 package org.acme.services;
 
 import org.acme.domain.Appointment;
+import org.acme.domain.AppointmentResponseDTO;
 import org.acme.models.entities.ScheduleEntity;
 import org.acme.mappers.AppointmentMapper;
+import org.acme.mappers.AppointmentResponseMapper;
 import org.acme.models.entities.AppointmentEntity;
 import org.acme.models.entities.DoctorEntity;
 import org.acme.models.entities.PatientEntity;
@@ -44,10 +46,13 @@ public class AppointmentService {
     AppointmentMapper mapper;
 
     @Inject
+    AppointmentResponseMapper rMapper;
+
+    @Inject
     EntityManager entityManager;
 
-    public List<Appointment> getAll() {
-        return repository.listAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    public List<AppointmentResponseDTO> getAll() {
+        return repository.listAll().stream().map(rMapper::toDomain).collect(Collectors.toList());
     }
 
     public Appointment getById(Long id) {

@@ -1,6 +1,7 @@
 package org.acme.resources;
 
 import org.acme.domain.Appointment;
+import org.acme.domain.AppointmentResponseDTO;
 import org.acme.mappers.AppointmentMapper;
 import org.acme.models.entities.AppointmentEntity;
 import org.acme.services.AppointmentService;
@@ -24,7 +25,7 @@ public class AppointmentResource {
     @GET
     public Response getAll() {
         try {
-            List<Appointment> appointments = service.getAll();
+            List<AppointmentResponseDTO> appointments = service.getAll();
             return Response.ok(appointments).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los turnos").build();
