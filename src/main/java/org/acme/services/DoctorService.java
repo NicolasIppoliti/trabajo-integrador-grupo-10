@@ -15,6 +15,7 @@ import org.acme.repositories.BranchRepository;
 import org.acme.repositories.DoctorRepository;
 import org.acme.repositories.ScheduleRepository;
 import org.acme.utils.Day;
+import org.acme.utils.Speciality;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -115,8 +116,14 @@ public class DoctorService {
             throw new IllegalArgumentException(
                     "El doctor ya tiene un horario cargado ese mismo dia" + schedule.getDay());
         }
-
-        // Agrega el horario al doctor
-        doctor.getSchedules().add(schedule);
     }
+    
+    @Transactional
+        public List<DoctorResponseDTO> getBySpeciality(Speciality speciality) {
+        List<DoctorEntity> doctors = repository.findBySpeciality(speciality);
+        return doctors.stream()
+                .map(responseMapper::toDomain) // Convierte cada DoctorEntity a DoctorResponseDTO
+                .collect(Collectors.toList());
+    }
+        
 }

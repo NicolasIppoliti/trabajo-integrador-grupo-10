@@ -55,8 +55,8 @@ public class AppointmentService {
         return repository.listAll().stream().map(rMapper::toDomain).collect(Collectors.toList());
     }
 
-    public Appointment getById(Long id) {
-        return mapper.toDomain(repository.findById(id));
+    public AppointmentResponseDTO getById(Long id) {
+        return rMapper.toDomain(repository.findById(id));
     }
 
     @Transactional

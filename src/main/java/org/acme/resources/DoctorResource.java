@@ -4,6 +4,7 @@ import org.acme.domain.DoctorRequestDTO;
 import org.acme.domain.DoctorResponseDTO;
 import org.acme.models.entities.DoctorEntity;
 import org.acme.services.DoctorService;
+import org.acme.utils.Speciality;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
@@ -135,6 +136,18 @@ public class DoctorResource {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error asignando horario al doctor: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/especialidad/{speciality}")
+    public Response getBySpeciality(@PathParam("speciality") Speciality speciality) { // LISTO OK!
+        try {
+            List<DoctorResponseDTO> doctors = service.getBySpeciality(speciality);
+            return Response.ok(doctors).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los especialistas")
                     .build();
         }
     }

@@ -10,6 +10,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 @Path("/turnos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,7 +37,7 @@ public class AppointmentResource {
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
         try {
-            Appointment appointment = service.getById(id);
+            AppointmentResponseDTO appointment = service.getById(id);
             if (appointment != null) {
                 return Response.ok(appointment).build();
             } else {
@@ -91,5 +92,18 @@ public class AppointmentResource {
         }
     }
 
-    
+    @GET
+    @Path("/available-slots/{doctorId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAvailableSlots(@PathParam("doctorId") Long doctorId) {
+        try {
+            List<Map<String, Object>> availableSlots = service.getAvailableSlots(doctorId);
+            return Response.ok(availableSlots).build();
+        } catch (Exception e) {
+            // Manejar el error y devolver una respuesta con un estado de error
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error al obtener los slots disponibles: " + e.getMessage())
+                    .build();
+        }
+    }
 }
