@@ -60,35 +60,37 @@ public class AppointmentService {
     }
 
     @Transactional
-    public AppointmentEntity create(Appointment appointment){
-    DoctorEntity doctor = dRepository.findById(appointment.getDoctor_id());
-    PatientEntity patient = pRepository.findById(appointment.getPatient_id());
+    public AppointmentEntity create(Appointment appointment) {
+        DoctorEntity doctor = dRepository.findById(appointment.getDoctor_id());
+        PatientEntity patient = pRepository.findById(appointment.getPatient_id());
 
-    LocalDateTime dateTime = appointment.getDateHour();
-    LocalDate date = dateTime.toLocalDate();
-    LocalTime time = dateTime.toLocalTime();
+        LocalDateTime dateTime = appointment.getDateHour();
+        LocalDate date = dateTime.toLocalDate();
+        LocalTime time = dateTime.toLocalTime();
 
-    AppointmentEntity entity = new AppointmentEntity();
-    entity.setDateHour(LocalDateTime.of(date, time));
-    entity.setPatient(patient);
-    entity.setDoctor(doctor);
-    entity.setQueryReason(appointment.getQueryReason());
-    System.out.println(date);
-    System.out.println(time);
+        AppointmentEntity entity = new AppointmentEntity();
+        entity.setDateHour(LocalDateTime.of(date, time));
+        entity.setPatient(patient);
+        entity.setDoctor(doctor);
+        entity.setQueryReason(appointment.getQueryReason());
+        System.out.println(date);
+        System.out.println(time);
 
-    if (isAValidDate(date) && isAValidHour(time)){
-        if (doctorWorksThatDay(appointment.getDoctor_id(), date) && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
-            if (!scheduleHaveAppointments(appointment.getDoctor_id(), dateTime)) {
-                repository.persist(entity);
-                return entity;
-            } else {
-                throw new IllegalArgumentException("The doctor already has an appointment at the specified time or within the 30 minutes before.");
+        if (isAValidDate(date) && isAValidHour(time)) {
+            if (doctorWorksThatDay(appointment.getDoctor_id(), date)
+                    && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
+                if (!scheduleHaveAppointments(appointment.getDoctor_id(), dateTime)) {
+                    repository.persist(entity);
+                    return entity;
+                } else {
+                    throw new IllegalArgumentException(
+                            "The doctor already has an appointment at the specified time or within the 30 minutes before.");
+                }
             }
         }
-    }
 
-    throw new IllegalArgumentException("The date and time are not valid.");
-}
+        throw new IllegalArgumentException("The date and time are not valid.");
+    }
 
     @Transactional
     public AppointmentEntity update(Long id, Appointment appointment) {
@@ -97,9 +99,9 @@ public class AppointmentService {
             LocalDate date = appointment.getDateHour().toLocalDate();
             LocalTime time = appointment.getDateHour().toLocalTime();
 
-
-            if (isAValidDate(date) && isAValidHour(time)){
-                if (doctorWorksThatDay(appointment.getDoctor_id(), date) && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
+            if (isAValidDate(date) && isAValidHour(time)) {
+                if (doctorWorksThatDay(appointment.getDoctor_id(), date)
+                        && doctorWorksThatDayAndTime(appointment.getDoctor_id(), date, time)) {
                     System.out.println("Parece que el doctor trabaja ese dia a esa hora");
                     if (!scheduleHaveAppointments(appointment.getDoctor_id(), appointment.getDateHour())) {
                         System.out.println("Parece que paso la validacion.Estoy a un paso de persistirlo...");
@@ -110,17 +112,17 @@ public class AppointmentService {
                         updatedEntity = entityManager.merge(updatedEntity);
                         return updatedEntity;
                     } else {
-                        throw new IllegalArgumentException("The doctor already has an appointment at the specified time or within the 30 minutes before.");
+                        throw new IllegalArgumentException(
+                                "The doctor already has an appointment at the specified time or within the 30 minutes before.");
                     }
                 }
             }
-        
+
             throw new IllegalArgumentException("The date and time are not valid.");
         }
         return null;
     }
 
-    
     @Transactional
     public boolean delete(Long id) {
         var existingEntity = repository.findById(id);
@@ -131,44 +133,45 @@ public class AppointmentService {
         return false;
     }
 
-    //----------------------------LOGICA PARA CREAR EN HORARIO VALIDADO-------------------------------
+    // ----------------------------LOGICA PARA CREAR EN HORARIO VALIDADO-------------------------------
 
+    public boolean isAValidDate(LocalDate date) {
+        LocalDate today = LocalDate.now();
+        LocalDate futureDate = today.plusMonths(2);
+        LocalDate earliestValidDate = today.plusDays(1); // Los turnos solo pueden pedirse para el día siguiente en
+                                                         // adelante
+        return !date.isBefore(earliestValidDate) && !date.isAfter(futureDate);
+    }
 
-public boolean isAValidDate(LocalDate date) {
-    LocalDate today = LocalDate.now();
-    LocalDate futureDate = today.plusMonths(2);
-    LocalDate earliestValidDate = today.plusDays(1); // Los turnos solo pueden pedirse para el día siguiente en adelante
-    return !date.isBefore(earliestValidDate) && !date.isAfter(futureDate);
-}
+    public boolean isAValidHour(LocalTime time) {
+        int minutes = time.getMinute();
+        int seconds = time.getSecond();
+        Log.warn("AQUI LOS MINUTOS Y SEGUNDOS!");
+        System.out.println(minutes + seconds);
 
-public boolean isAValidHour(LocalTime time) {
-    int minutes = time.getMinute();
-    int seconds = time.getSecond();
-    Log.warn("AQUI LOS MINUTOS Y SEGUNDOS!");
-    System.out.println(minutes+seconds);
+        // Verificar que los minutos sean 0 o 30, y que los segundos sean 0
+        return (minutes == 0 || minutes == 30) && seconds == 0;
+    }
 
-    // Verificar que los minutos sean 0 o 30, y que los segundos sean 0
-    return (minutes == 0 || minutes == 30) && seconds == 0;
-}
+    public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
+        // Obtener la hora exacta sin segundos
+        LocalDateTime roundedDateTime = dateTime.withSecond(0).withNano(0);
 
-public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
-    // Obtener la hora exacta sin segundos
-    LocalDateTime roundedDateTime = dateTime.withSecond(0).withNano(0);
-    
-    List<AppointmentEntity> appointments = repository.findAppointmentsByDoctorAndDate(doctorId, dateTime.toLocalDate());
-    for (AppointmentEntity appointment : appointments) {
-        LocalDateTime appointmentTime = appointment.getDateHour().withSecond(0).withNano(0);
-        
-        // Verificar si ya existe un turno en la hora exacta
-        if (appointmentTime.equals(roundedDateTime)) {
-            return true; // Ya existe un turno en esa hora exacta
+        List<AppointmentEntity> appointments = repository.findAppointmentsByDoctorAndDate(doctorId,
+                dateTime.toLocalDate());
+        for (AppointmentEntity appointment : appointments) {
+            LocalDateTime appointmentTime = appointment.getDateHour().withSecond(0).withNano(0);
+
+            // Verificar si ya existe un turno en la hora exacta
+            if (appointmentTime.equals(roundedDateTime)) {
+                return true; // Ya existe un turno en esa hora exacta
+            }
         }
-    }
-    
-    return false; // No existe un turno en esa hora exacta
+
+        return false; // No existe un turno en esa hora exacta
     }
 
-    public boolean doctorWorksThatDay(Long doctor_id, LocalDate date){
+    public boolean doctorWorksThatDay(Long doctor_id, LocalDate date) {
         DoctorEntity doctor = dRepository.findById(doctor_id);
         if (doctor == null) {
         }
@@ -201,6 +204,7 @@ public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
         return false;
     }
 
+// ----------------------------LOGICA PARA MAPEAR TURNOS DISPONIBLES-------------------------------
     public List<Map<String, Object>> generateDoctorAvailability(Long doctorId) {
         Set<ScheduleEntity> schedules = dRepository.findSchedulesByDoctorId(doctorId);
 
@@ -258,18 +262,18 @@ public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
     public List<Map<String, Object>> getAvailableSlots(Long doctorId) {
         // Obtener los horarios ocupados del médico
         Set<LocalDateTime> occupiedSlots = dRepository.findAppointmentDateHourByDoctorId(doctorId);
-    
+
         // Obtener la disponibilidad de horarios para el médico
         List<Map<String, Object>> availability = generateDoctorAvailability(doctorId);
-    
+
         // Filtrar la disponibilidad para obtener los horarios no ocupados
         List<Map<String, Object>> availableSlots = new ArrayList<>();
-    
+
         for (Map<String, Object> doctorAvailability : availability) {
             String date = (String) doctorAvailability.get("date");
             @SuppressWarnings("unchecked")
             List<String> slots = (List<String>) doctorAvailability.get("slots");
-    
+
             List<String> available = new ArrayList<>();
             for (String slot : slots) {
                 LocalDateTime slotDateTime = LocalDateTime.parse(date + "T" + slot + ":00");
@@ -277,7 +281,7 @@ public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
                     available.add(slot);
                 }
             }
-    
+
             if (!available.isEmpty()) {
                 Map<String, Object> availableSlotsMap = new HashMap<>();
                 availableSlotsMap.put("date", date);
@@ -285,9 +289,8 @@ public boolean scheduleHaveAppointments(Long doctorId, LocalDateTime dateTime) {
                 availableSlots.add(availableSlotsMap);
             }
         }
-    
+
         return availableSlots;
     }
-    
-}
 
+}

@@ -106,15 +106,15 @@ public class RecipeResource {
 
             Long patientId = patientIdFromToken.getValue();
 
-            System.out.println("ID del paciente convertido a Long: " + patientId);
+//            System.out.println("ID del paciente convertido a Long: " + patientId);
 
             // Obtener los IDs de las citas del paciente
             Set<Long> appointmentIds = pRepository.findAppointmentIdsByPatientId(patientId);
-            System.out.println("IDs de citas del paciente: " + appointmentIds);
+//            System.out.println("IDs de citas del paciente: " + appointmentIds);
 
             // Verificar si el paciente tiene permiso para ver la cita solicitada
             if (!appointmentIds.contains(id)) {
-                System.out.println("El paciente no tiene permiso para ver la receta de la cita con ID: " + id);
+//              System.out.println("El paciente no tiene permiso para ver la receta de la cita con ID: " + id);
                 return Response.status(Response.Status.FORBIDDEN)
                                .entity("No tiene permiso para ver la receta de esta cita")
                                .build();
@@ -122,7 +122,7 @@ public class RecipeResource {
 
             // Obtener las recetas relacionadas con el appointmentId
             Set<RecipeEntity> recipes = aRepository.findRecipesByAppointmentId(id);
-            System.out.println("Recetas obtenidas: " + recipes);
+//            System.out.println("Recetas obtenidas: " + recipes);
 
             return Response.ok(recipes).build();
         } catch (Exception e) {
