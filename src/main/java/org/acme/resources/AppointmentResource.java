@@ -106,4 +106,15 @@ public class AppointmentResource {
                     .build();
         }
     }
+
+    @GET
+    @Path("/paciente/{patientId}")
+    public Response getByPatientId(@PathParam("patientId") Long patientId) {
+        try {
+            List<AppointmentResponseDTO> appointments = service.getByPatientId(patientId);
+            return Response.ok(appointments).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al obtener los turnos").build();
+        }
+    }
 }

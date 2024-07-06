@@ -55,6 +55,10 @@ public class AppointmentService {
         return repository.listAll().stream().map(rMapper::toDomain).collect(Collectors.toList());
     }
 
+    public List<AppointmentResponseDTO> getByPatientId(Long patientId){
+        return repository.findAppointmentsByPatientId(patientId).stream().map(rMapper::toDomain).collect(Collectors.toList());
+    }
+
     public AppointmentResponseDTO getById(Long id) {
         return rMapper.toDomain(repository.findById(id));
     }
